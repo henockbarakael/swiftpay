@@ -14,7 +14,7 @@ model User {
   id                Int       @id @default(autoincrement())
   firstName         String?
   lastName          String?
-  email             String?
+  email             String   @unique
   hashedPassword    String
   salt              String?
   dob               DateTime?
@@ -31,8 +31,6 @@ model User {
   temporaryLockedAt DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  identifier        String    @unique
-  isPhoneNumber     Boolean?  @default(false)
 
   @@map("users")
 }

@@ -23,6 +23,12 @@
       ],
       "shared/database/*": [
         "libs/database/src/*"
+      ],
+      "shared/types": [
+        "libs/types/src"
+      ],
+      "shared/types/*": [
+        "libs/types/src/*"
       ]
     }
   }
