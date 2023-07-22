@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/agregator/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/agregator/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/agregator",
+  "projects": {
+    "agregator": {
+      "type": "application",
+      "root": "apps/agregator",
+      "entryFile": "main",
+      "sourceRoot": "apps/agregator/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/agregator/tsconfig.app.json"
+      }
+    },
+    "verification-module": {
+      "type": "application",
+      "root": "apps/verification-module",
+      "entryFile": "main",
+      "sourceRoot": "apps/verification-module/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/verification-module/tsconfig.app.json"
+      }
+    },
+    "wallet-module": {
+      "type": "application",
+      "root": "apps/wallet-module",
+      "entryFile": "main",
+      "sourceRoot": "apps/wallet-module/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/wallet-module/tsconfig.app.json"
+      }
+    },
+    "database-module": {
+      "type": "application",
+      "root": "apps/database-module",
+      "entryFile": "main",
+      "sourceRoot": "apps/database-module/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/database-module/tsconfig.app.json"
+      }
+    },
+    "kafka-module": {
+      "type": "application",
+      "root": "apps/kafka-module",
+      "entryFile": "main",
+      "sourceRoot": "apps/kafka-module/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/kafka-module/tsconfig.app.json"
+      }
+    },
+    "user-module": {
+      "type": "application",
+      "root": "apps/user-module",
+      "entryFile": "main",
+      "sourceRoot": "apps/user-module/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/user-module/tsconfig.app.json"
+      }
+    }
+  }
+}
