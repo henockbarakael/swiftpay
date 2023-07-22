@@ -11,7 +11,9 @@ describe('TelcoServiceController', () => {
       providers: [TelcoServiceService],
     }).compile();
 
-    telcoServiceController = app.get<TelcoServiceController>(TelcoServiceController);
+    telcoServiceController = app.get<TelcoServiceController>(
+      TelcoServiceController,
+    );
   });
 
   describe('root', () => {

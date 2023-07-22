@@ -25,10 +25,10 @@
         "libs/database/src/*"
       ],
       "shared/types": [
-        "libs/types/src"
+        "libs/types"
       ],
       "shared/types/*": [
-        "libs/types/src/*"
+        "libs/types/*"
       ]
     }
   }

@@ -11,7 +11,9 @@ describe('CallbackServiceController', () => {
       providers: [CallbackServiceService],
     }).compile();
 
-    callbackServiceController = app.get<CallbackServiceController>(CallbackServiceController);
+    callbackServiceController = app.get<CallbackServiceController>(
+      CallbackServiceController,
+    );
   });
 
   describe('root', () => {

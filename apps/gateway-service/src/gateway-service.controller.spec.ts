@@ -11,7 +11,9 @@ describe('GatewayServiceController', () => {
       providers: [GatewayServiceService],
     }).compile();
 
-    gatewayServiceController = app.get<GatewayServiceController>(GatewayServiceController);
+    gatewayServiceController = app.get<GatewayServiceController>(
+      GatewayServiceController,
+    );
   });
 
   describe('root', () => {

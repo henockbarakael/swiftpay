@@ -6,7 +6,7 @@ CREATE TABLE "users" (
     "email" TEXT,
     "hashedPassword" TEXT NOT NULL,
     "salt" TEXT,
-    "dob" TIMESTAMP(3),
+    "birthDate" TIMESTAMP(3),
     "gender" TEXT NOT NULL DEFAULT 'M',
     "address" TEXT,
     "city" TEXT,

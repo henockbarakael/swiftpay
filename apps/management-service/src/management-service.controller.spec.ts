@@ -11,7 +11,9 @@ describe('ManagementServiceController', () => {
       providers: [ManagementServiceService],
     }).compile();
 
-    managementServiceController = app.get<ManagementServiceController>(ManagementServiceController);
+    managementServiceController = app.get<ManagementServiceController>(
+      ManagementServiceController,
+    );
   });
 
   describe('root', () => {

@@ -3,7 +3,9 @@ import { CallbackServiceService } from './callback-service.service';
 
 @Controller()
 export class CallbackServiceController {
-  constructor(private readonly callbackServiceService: CallbackServiceService) {}
+  constructor(
+    private readonly callbackServiceService: CallbackServiceService,
+  ) {}
 
   @Get()
   getHello(): string {
