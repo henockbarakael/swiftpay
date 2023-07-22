@@ -19,49 +19,31 @@
         "tsConfigPath": "apps/agregator/tsconfig.app.json"
       }
     },
-    "verification-module": {
+    "gateway-service": {
       "type": "application",
-      "root": "apps/verification-module",
+      "root": "apps/gateway-service",
       "entryFile": "main",
-      "sourceRoot": "apps/verification-module/src",
+      "sourceRoot": "apps/gateway-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/verification-module/tsconfig.app.json"
+        "tsConfigPath": "apps/gateway-service/tsconfig.app.json"
       }
     },
-    "wallet-module": {
+    "telco-service": {
       "type": "application",
-      "root": "apps/wallet-module",
+      "root": "apps/telco-service",
       "entryFile": "main",
-      "sourceRoot": "apps/wallet-module/src",
+      "sourceRoot": "apps/telco-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/wallet-module/tsconfig.app.json"
+        "tsConfigPath": "apps/telco-service/tsconfig.app.json"
       }
     },
-    "database-module": {
+    "callback-service": {
       "type": "application",
-      "root": "apps/database-module",
+      "root": "apps/callback-service",
       "entryFile": "main",
-      "sourceRoot": "apps/database-module/src",
+      "sourceRoot": "apps/callback-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/database-module/tsconfig.app.json"
-      }
-    },
-    "kafka-module": {
-      "type": "application",
-      "root": "apps/kafka-module",
-      "entryFile": "main",
-      "sourceRoot": "apps/kafka-module/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/kafka-module/tsconfig.app.json"
-      }
-    },
-    "user-module": {
-      "type": "application",
-      "root": "apps/user-module",
-      "entryFile": "main",
-      "sourceRoot": "apps/user-module/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/user-module/tsconfig.app.json"
+        "tsConfigPath": "apps/callback-service/tsconfig.app.json"
       }
     }
   }
