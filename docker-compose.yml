@@ -1,2 +1,15 @@
-version: '3.7'
+version: '3.8'
+
+services:
+  agragator_db:
+    image: postgres:13
+    ports:
+        - 5432:5432
+    env_file:
+      - .env
+    hostname: agragator_db
+    environment:
+      POSTGRES_USER: agragator
+      POSTGRES_PASSWORD: agragator@pass
+      POSTGRES_DB: agragator_db
 
