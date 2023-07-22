@@ -70,6 +70,9 @@
     "roots": [
       "<rootDir>/apps/",
       "<rootDir>/libs/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^shared/database(|/.*)$": "<rootDir>/libs/database/src/$1"
+    }
   }
 }
