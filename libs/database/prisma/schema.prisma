@@ -96,7 +96,7 @@ model User {
 }
 
 model Merchant {
-  id            Int           @id @default(autoincrement())
+  id            String        @id @default(uuid())
   userId        String
   institutionId String
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
@@ -104,7 +104,7 @@ model Merchant {
   institution              Institution               @relation(fields: [institutionId], references: [id])
   user                     User                      @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
-  MerchantAccountParameter MerchantAccountParameter?
+  MerchantAccountParameter MerchantAccountParameter[]
   accountStatusId          String
 
   @@unique([userId])
@@ -247,7 +247,7 @@ model MerchantWallet {
   merchant              Merchant                @relation(fields: [merchantId], references: [id])
   balance               Float
   serviceId             String
-  merchantId            Int
+  merchantId            String
   MerchantWalletHistory MerchantWalletHistory[]
 
   @@index([merchantId])
@@ -276,7 +276,7 @@ model MerchantAccountParameter {
   type       String
   key        String
   value      String
-  merchantId Int      @unique
+  merchantId String     
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

@@ -29,6 +29,12 @@
       ],
       "shared/types/*": [
         "libs/types/*"
+      ],
+      "shared/wallet": [
+        "libs/wallet/src"
+      ],
+      "shared/wallet/*": [
+        "libs/wallet/src/*"
       ]
     }
   }

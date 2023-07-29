@@ -84,7 +84,8 @@
     ],
     "moduleNameMapper": {
       "^shared/database(|/.*)$": "<rootDir>/libs/database/src/$1",
-      "^shared/types(|/.*)$": "<rootDir>/libs/types/src/$1"
+      "^shared/types(|/.*)$": "<rootDir>/libs/types/src/$1",
+      "^shared/wallet(|/.*)$": "<rootDir>/libs/wallet/src/$1"
     }
   }
 }
