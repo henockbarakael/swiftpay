@@ -29,6 +29,12 @@
       ],
       "shared/types/*": [
         "libs/types/*"
+      ],
+      "shared/redis": [
+        "libs/redis/src"
+      ],
+      "shared/redis/*": [
+        "libs/redis/src/*"
       ]
     }
   }
