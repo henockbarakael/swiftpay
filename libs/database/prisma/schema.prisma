@@ -96,14 +96,16 @@ model User {
 }
 
 model Merchant {
-  id            Int    @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   userId        String
   institutionId String
+  accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
   institution              Institution               @relation(fields: [institutionId], references: [id])
   user                     User                      @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter?
+  accountStatusId          String
 
   @@unique([userId])
   @@map("marchants")
@@ -232,8 +234,9 @@ model Service {
 }
 
 model AccountStatus {
-  id   String @id @default(uuid())
-  name String
+  id       String     @id @default(uuid())
+  name     String
+  Merchant Merchant[]
 
   @@map("account_status")
 }
