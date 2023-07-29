@@ -88,19 +88,22 @@ model User {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   userRoles         UserRole[]
-  marchant          Marchant?
+  marchant          Merchant?
   userSupport       UserSupport?
+  AuditLog          AuditLog[]
 
   @@map("users")
 }
 
-model Marchant {
+model Merchant {
   id            Int    @id @default(autoincrement())
   userId        String
   institutionId String
 
-  institution Institution @relation(fields: [institutionId], references: [id])
-  user        User        @relation(fields: [userId], references: [id])
+  institution              Institution               @relation(fields: [institutionId], references: [id])
+  user                     User                      @relation(fields: [userId], references: [id])
+  MerchantWallet           MerchantWallet[]
+  MerchantAccountParameter MerchantAccountParameter?
 
   @@unique([userId])
   @@map("marchants")
@@ -117,54 +120,77 @@ model UserSupport {
 }
 
 model Transaction {
-  id                     String         @id @default(uuid())
-  idOps                  DailyOperation @relation(fields: [dailyOperationId], references: [id])
+  id                     String            @id @default(uuid())
+  idOps                  DailyOperation    @relation(fields: [dailyOperationId], references: [id])
   merchantReference      String
   amount                 Float
-  currency               String
-  service                String
-  status                 String
+  currency               Currency          @relation(fields: [currencyId], references: [id])
+  service                Service           @relation(fields: [serviceId], references: [id])
+  status                 TransactionStatus @relation(fields: [transactionStatusId], references: [id])
   telcoStatus            String
   telcoStatusDescription String
   reference              String
   telcoReference         String
-  createdAt              DateTime       @default(now())
-  updatedAt              DateTime       @updatedAt
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
   dailyOperationId       String
+  currencyId             String
+  transactionStatusId    String
+  serviceId              String
 
   @@unique([merchantReference])
   @@unique([telcoReference])
   @@unique([reference])
+  @@index([merchantReference])
+  @@index([reference])
+  @@index([telcoReference])
+  @@index([dailyOperationId])
+  @@map("transaction")
 }
 
 model DailyOperation {
-  id                     String        @id @default(uuid())
+  id                     String            @id @default(uuid())
   merchantReference      String
   amount                 Float
-  currency               String
-  service                String
-  status                 String
+  currency               Currency          @relation(fields: [currencyId], references: [id])
+  service                Service           @relation(fields: [serviceId], references: [id])
+  status                 TransactionStatus @relation(fields: [transactionStatusId], references: [id])
   telcoStatus            String
   telcoStatusDescription String
   reference              String
   telcoReference         String
-  createdAt              DateTime      @default(now())
-  updatedAt              DateTime      @updatedAt
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
   Transaction            Transaction[]
+  currencyId             String
+  serviceId              String
+  transactionStatusId    String
 
   @@unique([merchantReference])
   @@unique([telcoReference])
   @@unique([reference])
+  @@index([merchantReference])
+  @@index([reference])
+  @@index([telcoReference])
+  @@map("daily_operation")
 }
 
 model TransactionStatus {
-  id     String @id @default(uuid())
-  status String
+  id             String           @id @default(uuid())
+  status         String
+  Transaction    Transaction[]
+  DailyOperation DailyOperation[]
+
+  @@map("transaction_status")
 }
 
 model Currency {
-  id       String @id @default(uuid())
-  currency String
+  id             String           @id @default(uuid())
+  currency       String
+  Transaction    Transaction[]
+  DailyOperation DailyOperation[]
+
+  @@map("currency")
 }
 
 model Institution {
@@ -175,9 +201,114 @@ model Institution {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Marchant Marchant[]
+  Marchant Merchant[]
+
+  @@map("institution")
 }
 
 model MerchantCommission {
-  
+  id         String   @id @default(uuid())
+  service    Service  @relation(fields: [serviceId], references: [id])
+  action     String
+  commission Float
+  createdAt  DateTime @default(now())
+  updateAt   DateTime @updatedAt
+  serviceId  String
+
+  @@index([serviceId])
+  @@map("merchant_commission")
+}
+
+model Service {
+  id                 String               @id @default(uuid())
+  name               String
+  serviceTopic       String
+  MerchantCommission MerchantCommission[]
+  MerchantWallet     MerchantWallet[]
+  Transaction        Transaction[]
+  DailyOperation     DailyOperation[]
+
+  @@map("service")
+}
+
+model AccountStatus {
+  id   String @id @default(uuid())
+  name String
+
+  @@map("account_status")
+}
+
+model MerchantWallet {
+  id                    String                  @id @default(uuid())
+  service               Service                 @relation(fields: [serviceId], references: [id])
+  merchant              Merchant                @relation(fields: [merchantId], references: [id])
+  balance               Float
+  serviceId             String
+  merchantId            Int
+  MerchantWalletHistory MerchantWalletHistory[]
+
+  @@index([merchantId])
+  @@map("merchant_wallet")
+}
+
+model MerchantWalletHistory {
+  id               String         @id @default(uuid())
+  merchantWallet   MerchantWallet @relation(fields: [merchantWalletId], references: [id])
+  action           String
+  amount           Float
+  previousBalance  Float
+  actualBalance    Float
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  merchantWalletId String
+
+  @@index([merchantWalletId])
+  @@index([action])
+  @@map("merchant_wallet_history")
+}
+
+model MerchantAccountParameter {
+  id         String   @id @default(uuid())
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
+  type       String
+  key        String
+  value      String
+  merchantId Int      @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("merchant_wallet_parameter")
+}
+
+model AgregatorParameter {
+  id        String   @id @default(uuid())
+  type      String
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("agregator_parameter")
+}
+
+model BlacklistNumber {
+  id        String   @id @default(uuid())
+  number    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blacklist_number")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  user          User     @relation(fields: [userId], references: [id])
+  action        String
+  modifiedTable String
+  oldValue      String
+  newValue      String
+  createdAt     DateTime @default(now())
+  userId        String
+
+  @@map("audit_log")
 }
