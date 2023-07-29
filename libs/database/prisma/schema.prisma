@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Permission {
-  id             String              @id @default(uuid())
+  id             String           @id @default(uuid())
   name           String
   slug           String           @unique
   createdAt      DateTime         @default(now())
@@ -22,7 +22,7 @@ model Permission {
 }
 
 model RolePermission {
-  id           String      @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
   slug         String   @unique
   createdAt    DateTime @default(now())
@@ -38,7 +38,7 @@ model RolePermission {
 }
 
 model Role {
-  id              String              @id @default(uuid())
+  id              String           @id @default(uuid())
   name            String
   slug            String           @unique
   createdAt       DateTime         @default(now())
@@ -51,7 +51,7 @@ model Role {
 }
 
 model UserRole {
-  id        String      @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
   slug      String   @unique
   createdAt DateTime @default(now())
@@ -67,7 +67,7 @@ model UserRole {
 }
 
 model User {
-  id                String          @id @default(uuid())
+  id                String       @id @default(uuid())
   firstName         String?
   lastName          String?
   email             String       @unique
@@ -95,21 +95,89 @@ model User {
 }
 
 model Marchant {
-  id     Int @id @default(autoincrement())
-  userId String
+  id            Int    @id @default(autoincrement())
+  userId        String
+  institutionId String
 
-  user User @relation(fields: [userId], references: [id])
+  institution Institution @relation(fields: [institutionId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
 
   @@unique([userId])
   @@map("marchants")
 }
 
 model UserSupport {
-  id     Int @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   userId String
 
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId])
   @@map("users_support")
+}
+
+model Transaction {
+  id                     String         @id @default(uuid())
+  idOps                  DailyOperation @relation(fields: [dailyOperationId], references: [id])
+  merchantReference      String
+  amount                 Float
+  currency               String
+  service                String
+  status                 String
+  telcoStatus            String
+  telcoStatusDescription String
+  reference              String
+  telcoReference         String
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  dailyOperationId       String
+
+  @@unique([merchantReference])
+  @@unique([telcoReference])
+  @@unique([reference])
+}
+
+model DailyOperation {
+  id                     String        @id @default(uuid())
+  merchantReference      String
+  amount                 Float
+  currency               String
+  service                String
+  status                 String
+  telcoStatus            String
+  telcoStatusDescription String
+  reference              String
+  telcoReference         String
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  Transaction            Transaction[]
+
+  @@unique([merchantReference])
+  @@unique([telcoReference])
+  @@unique([reference])
+}
+
+model TransactionStatus {
+  id     String @id @default(uuid())
+  status String
+}
+
+model Currency {
+  id       String @id @default(uuid())
+  currency String
+}
+
+model Institution {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  tel       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Marchant Marchant[]
+}
+
+model MerchantCommission {
+  
 }
