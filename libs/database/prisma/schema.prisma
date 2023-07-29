@@ -101,8 +101,8 @@ model Merchant {
   institutionId String
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
-  institution              Institution               @relation(fields: [institutionId], references: [id])
-  user                     User                      @relation(fields: [userId], references: [id])
+  institution              Institution                @relation(fields: [institutionId], references: [id])
+  user                     User                       @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter[]
   accountStatusId          String
@@ -191,6 +191,7 @@ model Currency {
   currency       String
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
+  MerchantWallet MerchantWallet[]
 
   @@map("currency")
 }
@@ -246,9 +247,11 @@ model MerchantWallet {
   service               Service                 @relation(fields: [serviceId], references: [id])
   merchant              Merchant                @relation(fields: [merchantId], references: [id])
   balance               Float
+  currency              Currency                @relation(fields: [currencyId], references: [id])
   serviceId             String
   merchantId            String
   MerchantWalletHistory MerchantWalletHistory[]
+  currencyId            String
 
   @@index([merchantId])
   @@map("merchant_wallet")
@@ -276,7 +279,7 @@ model MerchantAccountParameter {
   type       String
   key        String
   value      String
-  merchantId String     
+  merchantId String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
