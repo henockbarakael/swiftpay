@@ -84,7 +84,8 @@
     ],
     "moduleNameMapper": {
       "^shared/database(|/.*)$": "<rootDir>/libs/database/src/$1",
-      "^shared/types(|/.*)$": "<rootDir>/libs/types/src/$1"
+      "^shared/types(|/.*)$": "<rootDir>/libs/types/src/$1",
+      "^shared/kafka(|/.*)$": "<rootDir>/libs/kafka/src/$1"
     }
   }
 }
