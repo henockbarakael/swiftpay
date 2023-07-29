@@ -99,4 +99,45 @@ export class WalletService {
 
     return { update: update, create: create };
   }
+
+  async refund(
+    amount: number,
+    merchantId: string,
+    currency: string,
+  ): Promise<any> {
+    const wallet = await this.service.merchantWallet.findUnique({
+      where: {
+        merchantId: merchantId,
+        currency: {
+          currency: currency,
+        },
+      },
+    });
+
+    const previousBalance = wallet.balance;
+    const actualBalance = wallet.balance + amount;
+    wallet.balance = actualBalance;
+    // update wallet
+    const update = await this.service.merchantWallet.update({
+      data: {
+        balance: wallet.balance,
+      },
+      where: {
+        id: wallet.id,
+      },
+    });
+
+    // add new record to history
+    const create = await this.service.merchantWalletHistory.create({
+      data: {
+        action: 'debit',
+        amount: amount,
+        previousBalance: previousBalance,
+        actualBalance: actualBalance,
+        merchantWalletId: wallet.id,
+      },
+    });
+
+    return { update: update, create: create };
+  }
 }
