@@ -12,11 +12,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         options: {
           client: {
             clientId: 'telco',
-            brokers: [
-              '161.35.161.18:9092',
-              '161.35.168.245:9092',
-              '161.35.165.31:9092',
-            ],
+            brokers: process.env.KAFKA_BROKERS.split(','),
           },
           consumer: {
             groupId: 'telco',
