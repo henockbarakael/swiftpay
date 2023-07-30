@@ -99,6 +99,7 @@ model Merchant {
   id            String        @id @default(uuid())
   userId        String
   institutionId String
+  key           String        @unique
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
   institution              Institution                @relation(fields: [institutionId], references: [id])
