@@ -29,12 +29,6 @@
       ],
       "shared/types/*": [
         "libs/types/*"
-      ],
-      "shared/kafka": [
-        "libs/kafka/src"
-      ],
-      "shared/kafka/*": [
-        "libs/kafka/src/*"
       ]
     }
   }
