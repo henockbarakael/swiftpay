@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  app-notification:
+    build: 
+      context: .
+      dockerfile: ./apps/notification-service/Dockerfile
+      target: development
+    command: npm run start:dev notification-service
+    env_file:
+      - ./apps/notification-service/.env
+
   agragator_db:
     image: postgres:13
     ports:
@@ -24,8 +33,8 @@ services:
     restart: always
 
   redis-commander:
-    container_name: redis-commander
-    hostname: redis-commander
+    container_name: redis-web
+    hostname: redis-web
     image: ghcr.io/joeferner/redis-commander:latest
     environment:
       - REDIS_HOSTS=local:redis:6379
@@ -34,5 +43,5 @@ services:
       - HTTP_USER=agri_admin
       - HTTP_PASSWORD=agri_admin
     ports:
-      - "8081:8081"
+      - "8089:8089"
 
