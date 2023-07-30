@@ -82,6 +82,11 @@
         "tsConfigPath": "libs/types/tsconfig.lib.json"
       }
     },
+    "enums": {
+      "type": "library",
+      "root": "libs/enums",
+      "entryFile": "index"
+    },
     "redis": {
       "type": "library",
       "root": "libs/redis",
