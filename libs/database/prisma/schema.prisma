@@ -43,7 +43,7 @@ model Role {
   slug            String           @unique
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  permissionId    String
+  permissionId    Int
   rolePermissions RolePermission[]
   userRoles       UserRole[]
 
@@ -101,8 +101,8 @@ model Merchant {
   institutionId String
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
-  institution              Institution               @relation(fields: [institutionId], references: [id])
-  user                     User                      @relation(fields: [userId], references: [id])
+  institution              Institution                @relation(fields: [institutionId], references: [id])
+  user                     User                       @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter[]
   accountStatusId          String
@@ -112,7 +112,7 @@ model Merchant {
 }
 
 model UserSupport {
-  id     String @id @default(uuid())
+  id     Int    @id @default(autoincrement())
   userId String
 
   user User @relation(fields: [userId], references: [id])
@@ -191,6 +191,7 @@ model Currency {
   currency       String
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
+  MerchantWallet MerchantWallet[]
 
   @@map("currency")
 }
@@ -210,12 +211,12 @@ model Institution {
 
 model MerchantCommission {
   id         String   @id @default(uuid())
+  service    Service  @relation(fields: [serviceId], references: [id])
   action     String
   commission Float
   createdAt  DateTime @default(now())
   updateAt   DateTime @updatedAt
   serviceId  String
-  service    Service  @relation(fields: [serviceId], references: [id])
 
   @@index([serviceId])
   @@map("merchant_commission")
@@ -242,30 +243,30 @@ model AccountStatus {
 }
 
 model MerchantWallet {
-  id         String @id @default(uuid())
-  balance    Float
-  serviceId  String
-  merchantId String
-
+  id                    String                  @id @default(uuid())
   service               Service                 @relation(fields: [serviceId], references: [id])
   merchant              Merchant                @relation(fields: [merchantId], references: [id])
+  balance               Float
+  currency              Currency                @relation(fields: [currencyId], references: [id])
+  serviceId             String
+  merchantId            String
   MerchantWalletHistory MerchantWalletHistory[]
+  currencyId            String
 
   @@index([merchantId])
   @@map("merchant_wallet")
 }
 
 model MerchantWalletHistory {
-  id               String   @id @default(uuid())
+  id               String         @id @default(uuid())
+  merchantWallet   MerchantWallet @relation(fields: [merchantWalletId], references: [id])
   action           String
   amount           Float
   previousBalance  Float
   actualBalance    Float
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
   merchantWalletId String
-
-  merchantWallet MerchantWallet @relation(fields: [merchantWalletId], references: [id])
 
   @@index([merchantWalletId])
   @@index([action])
@@ -274,13 +275,13 @@ model MerchantWalletHistory {
 
 model MerchantAccountParameter {
   id         String   @id @default(uuid())
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
+  type       String
   key        String
   value      String
-  merchantId String   @unique
-  type       String
+  merchantId String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  merchant   Merchant @relation(fields: [merchantId], references: [id])
 
   @@map("merchant_wallet_parameter")
 }
@@ -307,16 +308,17 @@ model BlacklistNumber {
 
 model AuditLog {
   id            String   @id @default(uuid())
+  user          User     @relation(fields: [userId], references: [id])
   action        String
   modifiedTable String
   oldValue      String
   newValue      String
   createdAt     DateTime @default(now())
   userId        String
-  user          User     @relation(fields: [userId], references: [id])
 
   @@map("audit_log")
 }
+
 
 model NotificationType {
   id           String         @id @default(uuid())
