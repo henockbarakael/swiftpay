@@ -21,9 +21,14 @@ export class WalletService {
     return wallet;
   }
 
-  private async performUpdate(wallet: any, amount: number): Promise<any> {
+  private async performUpdate(
+    wallet: any,
+    amount: number,
+    action: string,
+  ): Promise<any> {
     const previousBalance = wallet.balance;
-    const actualBalance = wallet.balance + amount;
+    const actualBalance =
+      action === 'debit' ? wallet.balance - amount : wallet.balance + amount;
     wallet.balance = actualBalance;
     // update wallet
     const update = await this.service.merchantWallet.update({
@@ -38,7 +43,7 @@ export class WalletService {
     // add new record to history
     const create = await this.service.merchantWalletHistory.create({
       data: {
-        action: 'debit',
+        action: action,
         amount: amount,
         previousBalance: previousBalance,
         actualBalance: actualBalance,
@@ -62,7 +67,7 @@ export class WalletService {
     const check = this.isEnoughMoney(wallet, amount);
 
     if (check) {
-      return await this.performUpdate(wallet, amount);
+      return await this.performUpdate(wallet, amount, 'debit');
     } else {
       return false;
     }
@@ -75,7 +80,7 @@ export class WalletService {
   ): Promise<any> {
     const wallet = await this.getWalletbyCurrency(merchantId, currency);
 
-    return await this.performUpdate(wallet, amount);
+    return await this.performUpdate(wallet, amount, 'credit');
   }
 
   async refund(
