@@ -3,8 +3,9 @@ import { NotificationServiceModule } from './notification-service.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    NotificationServiceModule,
+  const app = await NestFactory.create(NotificationServiceModule);
+
+  app.connectMicroservice<MicroserviceOptions>(
     {
       transport: Transport.KAFKA,
       options: {
@@ -17,6 +18,8 @@ async function bootstrap() {
       }
     }
   )
-  await app.listen();
+
+  await app.startAllMicroservices()
+  await app.listen(3002);
 }
 bootstrap();

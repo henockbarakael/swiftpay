@@ -4,8 +4,9 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    TelcoServiceModule,
+  const app = await NestFactory.create(TelcoServiceModule)
+
+  app.connectMicroservice<MicroserviceOptions>(
     {
       transport: Transport.KAFKA,
       options: {
@@ -18,6 +19,7 @@ async function bootstrap() {
       }
     }
   )
-  await app.listen();
+  await app.startAllMicroservices()
+  await app.listen(3001);
 }
 bootstrap();
