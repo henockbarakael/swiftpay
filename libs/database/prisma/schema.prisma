@@ -104,7 +104,7 @@ model Merchant {
   institution              Institution               @relation(fields: [institutionId], references: [id])
   user                     User                      @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
-  MerchantAccountParameter MerchantAccountParameter?
+  MerchantAccountParameter MerchantAccountParameter[]
   accountStatusId          String
 
   @@unique([userId])
