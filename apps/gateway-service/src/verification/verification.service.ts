@@ -18,7 +18,7 @@ export class VerificationService {
 
 
     try {
-      const existMarchant = await this.dbService.merchant.findUnique({
+      const existMarchant = await this.dbService.merchant.findUniqueOrThrow({
         where: {
           id: checkMarchantVerificationDto.machantID
         },

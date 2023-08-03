@@ -35,6 +35,18 @@
       ],
       "shared/redis/*": [
         "libs/redis/src/*"
+      ],
+      "shared/constants": [
+        "libs/constants/src"
+      ],
+      "shared/constants/*": [
+        "libs/constants/src/*"
+      ],
+      "shared/auth-utils": [
+        "libs/auth-utils/src"
+      ],
+      "shared/auth-utils/*": [
+        "libs/auth-utils/src/*"
       ]
     }
   }

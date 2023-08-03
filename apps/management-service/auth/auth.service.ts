@@ -1,16 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { PrismaClient } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
 import { AuthHelpers } from 'libs/utils/auth.helpers';
 import * as argon from 'argon2';
+import { FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAGE } from 'shared/constants';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaClient, private jwtService: JwtService){}
-  async login(loginDto: LoginDto) {
+  constructor(private readonly prismaService: PrismaClient){}
+  async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
     try {
@@ -23,7 +23,7 @@ export class AuthService {
         }
       });
       if (!userRepo) {
-        throw new NotFoundException("cet utilisateur n'existe pas");
+        throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
       } else {
         const pwdMatches = await argon.verify(
           userRepo.hashedPassword,
@@ -31,14 +31,14 @@ export class AuthService {
         );
         if (pwdMatches) {
           const userResponse =
-            AuthHelpers.getInstance().renderUserResponse(userRepo);
+            AuthHelpers.getInstance().getUserAuth(userRepo);
           return userResponse;
         } else {
-          throw new NotFoundException('Mot de passe erroné');
+          throw new NotFoundException(PASSWORD_FAIL_MESSAGE);
         }
       }
     } catch (error) {
-      throw new NotFoundException("cet utilisateur n'existe pas");
+      throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
     }
   }
   create(createAuthDto: CreateAuthDto) {
