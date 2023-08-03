@@ -1,67 +1,71 @@
 
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { CheckMarchantVerificationDto, CreateVerificationDto } from './dto/create-verification.dto';
 import { UpdateVerificationDto } from './dto/update-verification.dto';
 import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';
 import * as NodeRSA from 'node-rsa';
 import { isObjectsEqual } from 'libs/utils';
+import { ClientKafka } from '@nestjs/microservices';
 @Injectable()
 export class VerificationService {
-  constructor(private dbService: DatabaseService){}
+  constructor(private dbService: DatabaseService, @Inject('NOTIFICATION_SERVICE') private notificationService: ClientKafka) { }
   async checkMarchant(checkMarchantVerificationDto: CheckMarchantVerificationDto) {
     const key = checkMarchantVerificationDto.key
     let wallet = null
     // check marchant ID
-    const rsa = new NodeRSA({b: 512})
-    
+    const rsa = new NodeRSA({ b: 512 })
+
 
     try {
       const existMarchant = await this.dbService.merchant.findUnique({
-        where:{
+        where: {
           id: checkMarchantVerificationDto.machantID
+        },
+        include:{
+          user: true,
         }
       })
       if (Object.keys(existMarchant).length !== 0) {
         const [existService, existCurrency] = await Promise.all([
-       
+
           // check service
           await this.dbService.service.findMany({
-            where:{
-             AND:[
-              {
-                name: checkMarchantVerificationDto.service
-              }
-             ]
+            where: {
+              AND: [
+                {
+                  name: checkMarchantVerificationDto.service
+                }
+              ]
             }
           }),
 
           await this.dbService.currency.findMany({
-            where:{
-             AND:[
-              {
-                currency: checkMarchantVerificationDto.currency
-              }
-             ]
+            where: {
+              AND: [
+                {
+                  currency: checkMarchantVerificationDto.currency
+                }
+              ]
             }
           }),
 
-        
-        
-      ])
-      if (existService.length !== 0 && existCurrency.length!== 0) {
-         if (checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT 
-          || checkMarchantVerificationDto.action=== ActionOperationEnum.CREDIT) {
 
-          const decrypted =decodeURIComponent(JSON.parse(rsa.decrypt(key, 'utf8').toString()))
-          delete checkMarchantVerificationDto.key
-          const isIntegrity = isObjectsEqual(decrypted, checkMarchantVerificationDto)
 
-          // verifify integrity
+        ])
+        if (existService.length !== 0 && existCurrency.length !== 0) {
+          if (checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT
+            || checkMarchantVerificationDto.action === ActionOperationEnum.CREDIT) {
+
+            const decrypted = decodeURIComponent(JSON.parse(rsa.decrypt(key, 'utf8').toString()))
+            delete checkMarchantVerificationDto.key
+            const isIntegrity = isObjectsEqual(decrypted, checkMarchantVerificationDto)
+
+            // verifify integrity
             if (isIntegrity) {
               wallet = await this.dbService.merchantWallet.findMany({
-                where:{
-                  AND:[
+                where: {
+                  AND: [
                     {
                       merchantId: existMarchant.id
                     },
@@ -71,13 +75,17 @@ export class VerificationService {
                   ]
                 }
               })
+              this.notificationService.emit('send-wallet-verification', JSON.stringify({
+                to: existMarchant.user.email,
+                marchant: existMarchant.user,
+              }),)
               return wallet
             }
 
-         }
+          }
+        }
       }
-     }
-    
+
     } catch (error) {
       throw new NotAcceptableException("Impossible de valider votre verifaction")
     }

@@ -39,12 +39,12 @@ export class MailService {
     const data = JSON.parse(payload);
     const text = i18nMails.walletverificationTxt;
     await this.mailerService.sendMail({
-      to: data.marchant.email,
+      to: data.to,
       subject:'verify wallet',
       template: './walletverification',
       context:{
         marchantName :`${data.marchant.name}`,
-        text: data.text
+        text
       }
     })
   }
