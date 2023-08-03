@@ -43,7 +43,7 @@ export class MailService {
       subject:'verify wallet',
       template: './walletverification',
       context:{
-        marchantName :`${data.marchant.name}`,
+        marchantName :`${data.marchant.firstName} ${data.marchant.lastName}`,
         text
       }
     })
