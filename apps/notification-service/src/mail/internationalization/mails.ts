@@ -7,4 +7,5 @@ resetPasswordTxt: `Nous avons reçu une demande de réinitialisation de votre mo
 Si vous avez effectué cette demande, vous pouvez réinitialiser votre mot de passe en cliquant sur le lien ci-dessous :`,
 resetPasswordSubject: 'Réinitialiser mot de passe',
 send_verification_user_identifier: `Veuillez confirmer que cette adresse mail vous appartient.`,
+walletverificationTxt:'Nous avons bien reçu votre demande de verification de votre wallet. En voici les infos: '
 };

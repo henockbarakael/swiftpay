@@ -5,6 +5,7 @@ import { i18nMails } from './internationalization';
 
 @Injectable()
 export class MailService {
+
   constructor(
     private mailerService: MailerService,
     private configService: ConfigService,
@@ -33,5 +34,18 @@ export class MailService {
         validation_text,
       },
     });
+  }
+  async sendWalletVerification(payload: string) {
+    const data = JSON.parse(payload);
+    const text = i18nMails.walletverificationTxt;
+    await this.mailerService.sendMail({
+      to: data.marchant.email,
+      subject:'verify wallet',
+      template: './walletverification',
+      context:{
+        marchantName :`${data.marchant.name}`,
+        text: data.text
+      }
+    })
   }
 }
