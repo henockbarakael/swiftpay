@@ -23,7 +23,23 @@ export class AuthUtilsService {
           },
         );
       }
-      getUserAuth(payload: Partial<IUserResponse>): IUserResponse {
+      getUserAuth(payload: IUserResponse): IUserResponse {
+        try {
+          const response: IUserResponse = {
+            user: {
+              id: payload.id,
+              email: payload.email,
+              role: payload.userRoles,
+              isActive: payload.isActive,
+            },
+            access_token: this.generateJWT(payload),
+          } as unknown as IUserResponse;
+          return response;
+        } catch (error) {
+        } finally {
+        }
+      }
+      getMarchantAuth(payload: IUserResponse): IUserResponse {
         try {
           const response: IUserResponse = {
             user: {

@@ -1,15 +1,17 @@
+import { AuthUtilsService } from './../../../libs/auth-utils/src/auth-utils.service';
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { PrismaClient } from '@prisma/client';
-import { AuthHelpers } from 'libs/utils/auth.helpers';
+
 import * as argon from 'argon2';
 import { FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAGE } from 'shared/constants';
+import { IUserResponse } from 'shared/types';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaClient){}
+  constructor(private readonly prismaService: PrismaClient, private readonly authUtilsService:AuthUtilsService){}
   async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
@@ -29,10 +31,12 @@ export class AuthService {
           userRepo.hashedPassword,
           password,
         );
+        const userRO = userRepo as unknown as IUserResponse
         if (pwdMatches) {
-          const userResponse =
-            AuthHelpers.getInstance().getUserAuth(userRepo);
-          return userResponse;
+          if (userRepo.userRoles.find(role=>role.slug=== RoleEnum.MARCHANT)) {
+            return  this.authUtilsService.getMarchantAuth(userRO);
+          }
+          return this.authUtilsService.getUserAuth(userRO)
         } else {
           throw new NotFoundException(PASSWORD_FAIL_MESSAGE);
         }
