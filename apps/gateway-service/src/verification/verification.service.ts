@@ -1,27 +1,30 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { CheckMarchantVerificationDto, CreateVerificationDto } from './dto/create-verification.dto';
 import { UpdateVerificationDto } from './dto/update-verification.dto';
 import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';
 import * as NodeRSA from 'node-rsa';
+import { isObjectsEqual } from 'libs/utils';
 @Injectable()
 export class VerificationService {
   constructor(private dbService: DatabaseService, private jwtService: JwtService){}
   async checkMarchant(checkMarchantVerificationDto: CheckMarchantVerificationDto) {
-    const keyDecoded = checkMarchantVerificationDto.key
+    const key = checkMarchantVerificationDto.key
     let wallet = null
     // check marchant ID
-    const key = new NodeRSA({b: 512})
-    key.decrypt(keyDecoded)
+    const rsa = new NodeRSA({b: 512})
+    
 
     try {
-      const [existMarchant,existService, existCurrency] = await Promise.all([
-        await this.dbService.merchant.findUnique({
-          where:{
-            id: checkMarchantVerificationDto.machantID
-          }
-        }),
+      const existMarchant = await this.dbService.merchant.findUnique({
+        where:{
+          id: checkMarchantVerificationDto.machantID
+        }
+      })
+      if (Object.keys(existMarchant).length !== 0) {
+        const [existService, existCurrency] = await Promise.all([
+       
           // check service
           await this.dbService.service.findMany({
             where:{
@@ -46,26 +49,37 @@ export class VerificationService {
         
         
       ])
-      if (Object.keys(existMarchant).length !== 0 && existService.length !== 0 && existCurrency.length!== 0) {
+      if (existService.length !== 0 && existCurrency.length!== 0) {
          if (checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT 
           || checkMarchantVerificationDto.action=== ActionOperationEnum.CREDIT) {
-            wallet = await this.dbService.merchantWallet.findMany({
-              where:{
-                AND:[
-                  {
-                    merchantId: existMarchant.id
-                  },
-                  {
-                    balance: checkMarchantVerificationDto.amount
-                  },
-                ]
-              }
-            })
-            return wallet
+
+          const decrypted =decodeURIComponent(JSON.parse(rsa.decrypt(key, 'utf8').toString()))
+          delete checkMarchantVerificationDto.key
+          const isIntegrity = isObjectsEqual(decrypted, checkMarchantVerificationDto)
+
+          // verifify integrity
+            if (isIntegrity) {
+              wallet = await this.dbService.merchantWallet.findMany({
+                where:{
+                  AND:[
+                    {
+                      merchantId: existMarchant.id
+                    },
+                    {
+                      balance: checkMarchantVerificationDto.amount
+                    },
+                  ]
+                }
+              })
+              return wallet
+            }
+
          }
       }
+     }
+    
     } catch (error) {
-      
+      throw new NotAcceptableException("Impossible de valider votre verifaction")
     }
   }
   create(createVerificationDto: CreateVerificationDto) {
