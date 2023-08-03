@@ -10,6 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ActionOperationEnum {
+  DEBIT
+  CREDIT
+}
+enum CurrencyEnum {
+  USD
+  EUR
+  CDF
+}
+
+enum TelcoServiceEnum {
+  AFRICELL
+  AIRTEL
+  ORANGE
+  VODACOM
+}
 model Permission {
   id             String           @id @default(uuid())
   name           String
@@ -188,7 +204,7 @@ model TransactionStatus {
 
 model Currency {
   id             String           @id @default(uuid())
-  currency       String
+  currency       CurrencyEnum     @default(USD)
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
 
@@ -197,7 +213,7 @@ model Currency {
 
 model Institution {
   id        String   @id @default(uuid())
-  name      String
+  name      TelcoServiceEnum
   email     String
   tel       String
   createdAt DateTime @default(now())
@@ -210,7 +226,7 @@ model Institution {
 
 model MerchantCommission {
   id         String   @id @default(uuid())
-  action     String
+  action     ActionOperationEnum 
   commission Float
   createdAt  DateTime @default(now())
   updateAt   DateTime @updatedAt
@@ -223,7 +239,7 @@ model MerchantCommission {
 
 model Service {
   id                 String               @id @default(uuid())
-  name               String
+  name               TelcoServiceEnum
   serviceTopic       String
   MerchantCommission MerchantCommission[]
   MerchantWallet     MerchantWallet[]
@@ -257,7 +273,7 @@ model MerchantWallet {
 
 model MerchantWalletHistory {
   id               String   @id @default(uuid())
-  action           String
+  action           ActionOperationEnum
   amount           Float
   previousBalance  Float
   actualBalance    Float
@@ -307,7 +323,7 @@ model BlacklistNumber {
 
 model AuditLog {
   id            String   @id @default(uuid())
-  action        String
+  action        ActionOperationEnum
   modifiedTable String
   oldValue      String
   newValue      String

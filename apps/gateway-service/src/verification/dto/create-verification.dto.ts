@@ -1,14 +1,15 @@
-import { IsNotEmpty } from 'class-validator';
-import { ActionOperationEnum } from 'libs/enums';
+import { ActionOperationEnum, CurrencyEnum, TelcoServiceEnum } from '@prisma/client';
+import { IsNotEmpty, IsPhoneNumber } from 'class-validator';
 export class CreateVerificationDto {
     @IsNotEmpty()
-    institutionID: number
+    machantID: number
 
     @IsNotEmpty()
+    @IsPhoneNumber()
     phoneNumber:number
 
     @IsNotEmpty()
-    key: number
+    key: string
 
     @IsNotEmpty()
     amount:number
@@ -17,11 +18,39 @@ export class CreateVerificationDto {
     currency: string
 
     @IsNotEmpty()
-    service:string
+    service:any
 
     @IsNotEmpty()
     reference:string
 
     @IsNotEmpty()
     action: ActionOperationEnum
+}
+
+export class CheckMarchantVerificationDto{
+    @IsNotEmpty()
+    machantID: string
+
+    @IsNotEmpty()
+    @IsPhoneNumber()
+    phoneNumber:string
+
+    @IsNotEmpty()
+    key: string
+
+    @IsNotEmpty()
+    amount:number
+
+    @IsNotEmpty()
+    currency: CurrencyEnum
+
+    @IsNotEmpty()
+    service:TelcoServiceEnum
+
+    @IsNotEmpty()
+    reference:string
+
+    @IsNotEmpty()
+    action: ActionOperationEnum
+ 
 }
