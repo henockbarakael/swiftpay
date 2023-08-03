@@ -1,4 +1,4 @@
-import { JwtService } from '@nestjs/jwt';
+
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { CheckMarchantVerificationDto, CreateVerificationDto } from './dto/create-verification.dto';
 import { UpdateVerificationDto } from './dto/update-verification.dto';
@@ -8,7 +8,7 @@ import * as NodeRSA from 'node-rsa';
 import { isObjectsEqual } from 'libs/utils';
 @Injectable()
 export class VerificationService {
-  constructor(private dbService: DatabaseService, private jwtService: JwtService){}
+  constructor(private dbService: DatabaseService){}
   async checkMarchant(checkMarchantVerificationDto: CheckMarchantVerificationDto) {
     const key = checkMarchantVerificationDto.key
     let wallet = null
