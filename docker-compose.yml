@@ -1,15 +1,40 @@
 version: '3.8'
 
 services:
-  agragator_db:
-    image: postgres:13
+  telco-service:
+    container_name: telco
+    build: 
+      context: .
+      dockerfile: apps/telco-service/Dockerfile
     ports:
-        - 5432:5432
-    env_file:
-      - .env
-    hostname: agragator_db
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      - "3020:3020"
+  mgm-service:
+    container_name: mgm
+    build: 
+      context: .
+      dockerfile: apps/management-service/Dockerfile
+    ports:
+      - "3800:3800"
+  notification-service:
+    container_name: notification
+    build: 
+      context: .
+      dockerfile: apps/notification-service/Dockerfile
+    ports:
+      - "3001:3001"
+  gateway-service:
+    container_name: gateway
+    build: 
+      context: .
+      dockerfile: apps/gateway-service/Dockerfile
+    ports:
+      - "3000:3000"
+  callback-service:
+    container_name: callback
+    build: 
+      context: .
+      dockerfile: apps/callback-service/Dockerfile
+    ports:
+      - "3700:3700"
+  
 
