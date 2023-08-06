@@ -10,7 +10,24 @@ export class UserSupportService {
   constructor(private readonly prismaService: DatabaseService) { }
   async create(createUserSupportDto: CreateUserSupportDto) {
     try {
-      return await this.prismaService.userSupport.create({data:{...createUserSupportDto}})
+      const [user, accountStatus] = await Promise.all([
+        await this.prismaService.user.findUniqueOrThrow({
+          where: {
+            id: createUserSupportDto.userId
+          }
+        }),
+        await this.prismaService.accountStatus.findUniqueOrThrow({
+          where: {
+            id: createUserSupportDto.accountStatusId
+          }
+        })
+      ])
+      return await this.prismaService.userSupport.create({
+        data: {
+          userId: user.id,
+          accountStatusId: accountStatus.id
+        }
+      })
     } catch (error) {
       throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE)
     }
@@ -71,7 +88,7 @@ export class UserSupportService {
   }
   async update(id: string, updateUserSupportDto: UpdateUserSupportDto) {
     try {
-      return await this.prismaService.userSupport.update({where:{id},data:{...updateUserSupportDto}})
+      return await this.prismaService.userSupport.update({ where: { id }, data: { ...updateUserSupportDto } })
     } catch (error) {
       throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE)
     }
@@ -83,6 +100,6 @@ export class UserSupportService {
         where: { id },
         data: { deletedAt: new Date(Date.now()) },
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 }

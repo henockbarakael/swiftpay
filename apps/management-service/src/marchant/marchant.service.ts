@@ -1,3 +1,4 @@
+
 import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreateMarchantDto } from './dto/create-marchant.dto';
 import { UpdateMarchantDto } from './dto/update-marchant.dto';
@@ -10,7 +11,30 @@ export class MarchantService {
   constructor(private readonly prismaService: DatabaseService) { }
   async create(createMarchantDto: CreateMarchantDto) {
     try {
-      return await this.prismaService.merchant.create({data:{...createMarchantDto}})
+      const [user, accountStatus, institution] = await Promise.all([
+        await this.prismaService.user.findUniqueOrThrow({
+          where: {
+            id: createMarchantDto.userId
+          }
+        }),
+        await this.prismaService.accountStatus.findUniqueOrThrow({
+          where: {
+            id: createMarchantDto.accountStatusId
+          }
+        }),
+        await this.prismaService.institution.findUniqueOrThrow({
+          where: {
+            id: createMarchantDto.institutionId
+          }
+        })
+      ])
+      return await this.prismaService.merchant.create({
+        data: {
+          userId: user.id,
+          accountStatusId: accountStatus.id,
+          institutionId: institution.id
+        }
+      })
     } catch (error) {
       throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE)
     }
