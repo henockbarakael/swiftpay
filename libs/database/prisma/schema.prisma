@@ -10,31 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ActionOperationEnum {
-  DEBIT
-  CREDIT
-}
-
-enum CurrencyEnum {
-  USD
-  EUR
-  CDF
-}
-
-enum TelcoServiceEnum {
-  AFRICELL
-  AIRTEL
-  ORANGE
-  VODACOM
-}
-
-enum RoleEnum {
-  MARCHANT
-  ADMIN
-  SUPER_ADMIN
-  USER_SUPPORT
-}
-
+// Models
 model Permission {
   id             String           @id @default(uuid())
   name           String
@@ -359,4 +335,23 @@ model Notification {
   type NotificationType @relation(fields: [typeId], references: [id])
 
   @@map("notifications")
+}
+
+//Enums
+enum ActionOperationEnum {
+  DEBIT
+  CREDIT
+}
+
+enum CurrencyEnum {
+  USD
+  EUR
+  CDF
+}
+
+enum TelcoServiceEnum {
+  AFRICELL
+  AIRTEL
+  ORANGE
+  VODACOM
 }

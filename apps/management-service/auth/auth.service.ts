@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client';
 import * as argon from 'argon2';
 import { FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAGE } from 'shared/constants';
 import { IUserResponse } from 'shared/types';
+import { RoleEnum } from 'libs/enums';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +35,21 @@ export class AuthService {
         const userRO = userRepo as unknown as IUserResponse
         if (pwdMatches) {
           if (userRepo.userRoles.find(role=>role.slug=== RoleEnum.MARCHANT)) {
-            return  this.authUtilsService.getMarchantAuth(userRO);
+            const marchant = await this.prismaService.merchant.findMany({where:{
+              AND:[
+                {
+                  userId: userRepo.id
+                }
+              ]
+            },
+            include:{
+              user: true,
+              accountStatus: true,
+              MerchantWallet: true,
+              MerchantAccountParameter: true
+            }
+          })[0]
+            return  this.authUtilsService.getUserAuth(marchant);
           }
           return this.authUtilsService.getUserAuth(userRO)
         } else {

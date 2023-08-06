@@ -1,2 +1,2 @@
-export * from './action-operation.enum';
+export * from './role.enum';
 export * from './service-operation.enum';
