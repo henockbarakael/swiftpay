@@ -96,15 +96,16 @@ model User {
 }
 
 model Merchant {
-  id            Int           @id @default(autoincrement())
+  id            String        @id @default(uuid())
   userId        String
   institutionId String
+  key           String        @unique
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
-  institution              Institution               @relation(fields: [institutionId], references: [id])
-  user                     User                      @relation(fields: [userId], references: [id])
+  institution              Institution                @relation(fields: [institutionId], references: [id])
+  user                     User                       @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
-  MerchantAccountParameter MerchantAccountParameter?
+  MerchantAccountParameter MerchantAccountParameter[]
   accountStatusId          String
 
   @@unique([userId])
@@ -112,7 +113,7 @@ model Merchant {
 }
 
 model UserSupport {
-  id     Int    @id @default(autoincrement())
+  id     String @id @default(uuid())
   userId String
 
   user User @relation(fields: [userId], references: [id])
@@ -191,6 +192,7 @@ model Currency {
   currency       String
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
+  MerchantWallet MerchantWallet[]
 
   @@map("currency")
 }
@@ -223,7 +225,7 @@ model MerchantCommission {
 
 model Service {
   id                 String               @id @default(uuid())
-  name               String
+  name               String               @unique
   serviceTopic       String
   MerchantCommission MerchantCommission[]
   MerchantWallet     MerchantWallet[]
@@ -246,9 +248,11 @@ model MerchantWallet {
   service               Service                 @relation(fields: [serviceId], references: [id])
   merchant              Merchant                @relation(fields: [merchantId], references: [id])
   balance               Float
+  currency              Currency                @relation(fields: [currencyId], references: [id])
   serviceId             String
-  merchantId            Int
+  merchantId            String
   MerchantWalletHistory MerchantWalletHistory[]
+  currencyId            String
 
   @@index([merchantId])
   @@map("merchant_wallet")
@@ -276,7 +280,7 @@ model MerchantAccountParameter {
   type       String
   key        String
   value      String
-  merchantId Int      @unique
+  merchantId String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -314,4 +318,22 @@ model AuditLog {
   userId        String
 
   @@map("audit_log")
+}
+
+model NotificationType {
+  id           String         @id @default(uuid())
+  name         String
+  Notification Notification[]
+
+  @@map("notifications_type")
+}
+
+model Notification {
+  id     String @id @default(uuid())
+  name   String
+  typeId String
+
+  type NotificationType @relation(fields: [typeId], references: [id])
+
+  @@map("notifications")
 }
