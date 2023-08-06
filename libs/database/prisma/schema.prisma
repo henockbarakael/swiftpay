@@ -44,6 +44,7 @@ model Role {
   slug            String           @unique
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
   permissionId    String
   rolePermissions RolePermission[]
   userRoles       UserRole[]
@@ -52,11 +53,12 @@ model Role {
 }
 
 model UserRole {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
   userId    String
   roleId    String
 
@@ -88,6 +90,7 @@ model User {
   temporaryLockedAt DateTime?
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+  deletedAt         DateTime?
   userRoles         UserRole[]
   marchant          Merchant?
   userSupport       UserSupport?
@@ -100,6 +103,7 @@ model Merchant {
   id            String        @id @default(uuid())
   userId        String
   institutionId String
+  deletedAt     DateTime?
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
   institution              Institution               @relation(fields: [institutionId], references: [id])
@@ -113,8 +117,9 @@ model Merchant {
 }
 
 model UserSupport {
-  id     String @id @default(uuid())
-  userId String
+  id        String    @id @default(uuid())
+  userId    String
+  deletedAt DateTime?
 
   user User @relation(fields: [userId], references: [id])
 
@@ -136,6 +141,7 @@ model Transaction {
   telcoReference         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
+  deletedAt              DateTime?
   dailyOperationId       String
   currencyId             String
   transactionStatusId    String
@@ -164,6 +170,7 @@ model DailyOperation {
   telcoReference         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
+  deletedAt              DateTime?
   Transaction            Transaction[]
   currencyId             String
   serviceId              String
@@ -181,6 +188,7 @@ model DailyOperation {
 model TransactionStatus {
   id             String           @id @default(uuid())
   status         String
+  deletedAt      DateTime?
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
 
@@ -203,6 +211,7 @@ model Institution {
   tel       String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
+  deletedAt DateTime?
 
   Marchant Merchant[]
 
@@ -215,6 +224,7 @@ model MerchantCommission {
   commission Float
   createdAt  DateTime            @default(now())
   updateAt   DateTime            @updatedAt
+  deletedAt  DateTime?
   serviceId  String
   service    Service             @relation(fields: [serviceId], references: [id])
 
@@ -226,6 +236,7 @@ model Service {
   id                 String               @id @default(uuid())
   name               TelcoServiceEnum
   serviceTopic       String
+  deletedAt          DateTime?
   MerchantCommission MerchantCommission[]
   MerchantWallet     MerchantWallet[]
   Transaction        Transaction[]
@@ -313,6 +324,7 @@ model AuditLog {
   oldValue      String
   newValue      String
   createdAt     DateTime            @default(now())
+  deletedAt     DateTime?
   userId        String
   user          User                @relation(fields: [userId], references: [id])
 
