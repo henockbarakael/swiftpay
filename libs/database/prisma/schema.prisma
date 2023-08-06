@@ -207,13 +207,14 @@ model Currency {
 }
 
 model Institution {
-  id        String           @id @default(uuid())
-  name      TelcoServiceEnum
-  email     String
-  tel       String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  deletedAt DateTime?
+  id          String           @id @default(uuid())
+  name        TelcoServiceEnum
+  email       String
+  phone       String
+  description String?          @db.Text
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
 
   Marchant Merchant[]
 
