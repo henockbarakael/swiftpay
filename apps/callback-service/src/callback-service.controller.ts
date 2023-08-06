@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 import { CallbackServiceService } from './callback-service.service';
 
 @Controller()
@@ -7,8 +7,9 @@ export class CallbackServiceController {
     private readonly callbackServiceService: CallbackServiceService,
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.callbackServiceService.getHello();
+  @Post()
+  processCallback(data: any){
+    this.callbackServiceService.processCallback(data)
+    return {}
   }
 }

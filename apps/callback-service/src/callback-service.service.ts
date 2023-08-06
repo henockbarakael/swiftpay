@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CallbackServiceService {
-  getHello(): string {
-    return 'Hello World!';
+
+  processCallback(data: any){
+    console.log(data)
+    return;
   }
 }

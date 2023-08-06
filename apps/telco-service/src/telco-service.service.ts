@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { Request } from 'shared/types/request.type';
 
 @Injectable()
 export class TelcoServiceService {
@@ -8,7 +9,12 @@ export class TelcoServiceService {
     private readonly telcoClient: ClientKafka,
   ) {}
 
-  getHello(): string {
-    return 'Hello World!';
+  handleTelcoRequest(data: Request) {
+    // call axios to send request to freshpay
+    // wait for a callback
+    // process the callback
+    console.log(data)
+    return;
   }
+
 }
