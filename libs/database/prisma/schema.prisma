@@ -117,11 +117,13 @@ model Merchant {
 }
 
 model UserSupport {
-  id        String    @id @default(uuid())
-  userId    String
-  deletedAt DateTime?
+  id              String    @id @default(uuid())
+  userId          String
+  deletedAt       DateTime?
+  accountStatusId String
 
-  user User @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
   @@unique([userId])
   @@map("users_support")
@@ -246,9 +248,10 @@ model Service {
 }
 
 model AccountStatus {
-  id       String     @id @default(uuid())
-  name     String
-  Merchant Merchant[]
+  id          String        @id @default(uuid())
+  name        String
+  Merchant    Merchant[]
+  UserSupport UserSupport[]
 
   @@map("account_status")
 }

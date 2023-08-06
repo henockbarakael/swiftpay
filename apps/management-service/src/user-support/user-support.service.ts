@@ -1,26 +1,88 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreateUserSupportDto } from './dto/create-user-support.dto';
 import { UpdateUserSupportDto } from './dto/update-user-support.dto';
+import { DatabaseService } from 'shared/database';
+import { PaginationDto } from 'shared/dto';
+import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'shared/constants';
 
 @Injectable()
 export class UserSupportService {
-  create(createUserSupportDto: CreateUserSupportDto) {
-    return 'This action adds a new userSupport';
+  constructor(private readonly prismaService: DatabaseService) { }
+  async create(createUserSupportDto: CreateUserSupportDto) {
+    try {
+      return await this.prismaService.userSupport.create({data:{...createUserSupportDto}})
+    } catch (error) {
+      throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE)
+    }
   }
 
-  findAll() {
-    return `This action returns all userSupport`;
+  async findAll(pagination: PaginationDto) {
+    const offSet = (pagination.page - 1) * pagination.limit;
+    try {
+      return await this.prismaService.userSupport.findMany({
+        include: {
+          user: true,
+          accountStatus: true,
+        },
+        skip: offSet,
+        take: pagination.limit
+      })
+    } catch (error) {
+      throw new NotFoundException(NOT_FOUND_USER_MESSAGE)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userSupport`;
+
+  async findOne(id: string) {
+    try {
+      return await this.prismaService.userSupport.findUnique({
+        where: {
+          id
+        },
+        include: {
+          user: true,
+          accountStatus: true,
+        }
+      })
+    } catch (error) {
+      throw new NotFoundException(NOT_FOUND_USER_MESSAGE)
+    }
+  }
+  async findByUserId(id: string) {
+    try {
+      return await this.prismaService.merchant.findMany({
+        where: {
+          AND: [
+            {
+              userId: id
+            }
+          ]
+        },
+        include: {
+          user: true,
+          accountStatus: true,
+          MerchantWallet: true,
+          MerchantAccountParameter: true
+        }
+      })[0]
+    } catch (error) {
+      throw new NotFoundException(NOT_FOUND_USER_MESSAGE)
+    }
+  }
+  async update(id: string, updateUserSupportDto: UpdateUserSupportDto) {
+    try {
+      return await this.prismaService.userSupport.update({where:{id},data:{...updateUserSupportDto}})
+    } catch (error) {
+      throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE)
+    }
   }
 
-  update(id: number, updateUserSupportDto: UpdateUserSupportDto) {
-    return `This action updates a #${id} userSupport`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userSupport`;
+  async remove(id: string) {
+    try {
+      return await this.prismaService.userSupport.update({
+        where: { id },
+        data: { deletedAt: new Date(Date.now()) },
+      });
+    } catch (error) {}
   }
 }

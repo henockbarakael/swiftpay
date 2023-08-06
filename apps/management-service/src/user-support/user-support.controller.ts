@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UserSupportService } from './user-support.service';
 import { CreateUserSupportDto } from './dto/create-user-support.dto';
 import { UpdateUserSupportDto } from './dto/update-user-support.dto';
+import { PaginationDto } from 'shared/dto';
 
 @Controller('user-support')
 export class UserSupportController {
@@ -13,22 +14,22 @@ export class UserSupportController {
   }
 
   @Get()
-  findAll() {
-    return this.userSupportService.findAll();
+  findAll(@Query() userSupportQuery: PaginationDto) {
+    return this.userSupportService.findAll(userSupportQuery);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userSupportService.findOne(+id);
+    return this.userSupportService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserSupportDto: UpdateUserSupportDto) {
-    return this.userSupportService.update(+id, updateUserSupportDto);
+    return this.userSupportService.update(id, updateUserSupportDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userSupportService.remove(+id);
+    return this.userSupportService.remove(id);
   }
 }
