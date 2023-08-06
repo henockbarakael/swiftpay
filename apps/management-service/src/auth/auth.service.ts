@@ -1,18 +1,18 @@
-import { AuthUtilsService } from './../../../libs/auth-utils/src/auth-utils.service';
+import { AuthUtilsService } from '../../../../libs/auth-utils/src/auth-utils.service';
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
-import { PrismaClient } from '@prisma/client';
-
 import * as argon from 'argon2';
 import { FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAGE } from 'shared/constants';
 import { IUserResponse } from 'shared/types';
 import { RoleEnum } from 'libs/enums';
+import { DatabaseService } from 'shared/database';
+import { MarchantService } from '../marchant/marchant.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaClient, private readonly authUtilsService:AuthUtilsService){}
+  constructor(private readonly prismaService:DatabaseService, private readonly authUtilsService:AuthUtilsService, private readonly marchantService: MarchantService){}
   async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
@@ -35,20 +35,7 @@ export class AuthService {
         const userRO = userRepo as unknown as IUserResponse
         if (pwdMatches) {
           if (userRepo.userRoles.find(role=>role.slug=== RoleEnum.MARCHANT)) {
-            const marchant = await this.prismaService.merchant.findMany({where:{
-              AND:[
-                {
-                  userId: userRepo.id
-                }
-              ]
-            },
-            include:{
-              user: true,
-              accountStatus: true,
-              MerchantWallet: true,
-              MerchantAccountParameter: true
-            }
-          })[0]
+            const marchant = await this.marchantService.findByUserId(userRepo.id)
             return  this.authUtilsService.getUserAuth(marchant);
           }
           return this.authUtilsService.getUserAuth(userRO)

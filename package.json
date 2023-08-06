@@ -107,7 +107,8 @@
       "^shared/types(|/.*)$": "<rootDir>/libs/types/src/$1",
       "^shared/redis(|/.*)$": "<rootDir>/libs/redis/src/$1",
       "^shared/constants(|/.*)$": "<rootDir>/libs/constants/src/$1",
-      "^shared/auth-utils(|/.*)$": "<rootDir>/libs/auth-utils/src/$1"
+      "^shared/auth-utils(|/.*)$": "<rootDir>/libs/auth-utils/src/$1",
+      "^shared/dto(|/.*)$": "<rootDir>/libs/dto/src/$1"
     }
   }
 }

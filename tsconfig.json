@@ -47,6 +47,12 @@
       ],
       "shared/auth-utils/*": [
         "libs/auth-utils/src/*"
+      ],
+      "shared/dto": [
+        "libs/dto/src"
+      ],
+      "shared/dto/*": [
+        "libs/dto/src/*"
       ]
     }
   }
