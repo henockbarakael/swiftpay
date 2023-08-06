@@ -90,6 +90,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/redis/tsconfig.lib.json"
       }
+    },
+    "merchant-commission": {
+      "type": "library",
+      "root": "libs/merchant-commission",
+      "entryFile": "index",
+      "sourceRoot": "libs/merchant-commission/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/merchant-commission/tsconfig.lib.json"
+      }
     }
   }
 }

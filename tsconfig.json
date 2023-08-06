@@ -35,6 +35,12 @@
       ],
       "shared/redis/*": [
         "libs/redis/src/*"
+      ],
+      "shared/merchant-commission": [
+        "libs/merchant-commission/src"
+      ],
+      "shared/merchant-commission/*": [
+        "libs/merchant-commission/src/*"
       ]
     }
   }
