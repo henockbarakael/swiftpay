@@ -6,7 +6,7 @@ export class GatewayServiceController {
   constructor(private readonly gatewayServiceService: GatewayServiceService) {}
 
   @Post()
-  gateway() {
-    return this.gatewayServiceService.getHello();
+  gateway(data : any) {
+    return this.gatewayServiceService.processRequest(data);
   }
 }

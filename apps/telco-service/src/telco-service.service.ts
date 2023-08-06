@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { Request } from 'shared/types/request.type';
+import { Request } from 'shared/types/request.event';
 
 @Injectable()
 export class TelcoServiceService {

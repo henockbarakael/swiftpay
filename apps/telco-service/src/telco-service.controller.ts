@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { TelcoServiceService } from './telco-service.service';
 import { EventPattern } from '@nestjs/microservices';
-import { Request } from 'shared/types/request.type';
 
 @Controller()
 export class TelcoServiceController {
