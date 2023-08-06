@@ -3,7 +3,9 @@ import { UserSupportService } from './user-support.service';
 import { CreateUserSupportDto } from './dto/create-user-support.dto';
 import { UpdateUserSupportDto } from './dto/update-user-support.dto';
 import { PaginationDto } from 'shared/dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('marchant')
 @Controller('user-support')
 export class UserSupportController {
   constructor(private readonly userSupportService: UserSupportService) {}
