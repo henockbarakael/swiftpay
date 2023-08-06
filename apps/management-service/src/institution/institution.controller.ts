@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { InstitutionService } from './institution.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('institution')
 @Controller('institution')
 export class InstitutionController {
   constructor(private readonly institutionService: InstitutionService) {}
@@ -19,16 +21,16 @@ export class InstitutionController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.institutionService.findOne(+id);
+    return this.institutionService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateInstitutionDto: UpdateInstitutionDto) {
-    return this.institutionService.update(+id, updateInstitutionDto);
+    return this.institutionService.update(id, updateInstitutionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.institutionService.remove(+id);
+    return this.institutionService.remove(id);
   }
 }

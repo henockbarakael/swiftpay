@@ -7,7 +7,7 @@ import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'shared/constan
 @Injectable()
 export class InstitutionService {
   constructor(private readonly prismaService: DatabaseService) { }
-  async indAll() {
+  async findAll() {
     try {
       return await this.prismaService.institution.findMany({
         include: {
