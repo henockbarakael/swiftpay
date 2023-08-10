@@ -75,7 +75,7 @@ export class VerificationService {
                   ]
                 }
               })
-              this.notificationService.emit('send-wallet-verification', JSON.stringify({
+              this.notificationService.send('send-wallet-verification', JSON.stringify({
                 to: existMarchant.user.email,
                 marchant: existMarchant.user,
               }),)
