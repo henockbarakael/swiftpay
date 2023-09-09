@@ -7,14 +7,15 @@ import { ActionOperationEnum } from '@prisma/client';
 import * as NodeRSA from 'node-rsa';
 import { isObjectsEqual } from 'libs/utils';
 import { ClientKafka } from '@nestjs/microservices';
+import {EncryptionService} from "shared/encryption";
 @Injectable()
 export class VerificationService {
-  constructor(private dbService: DatabaseService, @Inject('NOTIFICATION_SERVICE') private notificationService: ClientKafka) { }
+  constructor(private dbService: DatabaseService, @Inject('NOTIFICATION_SERVICE') private notificationService: ClientKafka, private encryptionService: EncryptionService,) { }
   async checkMarchant(checkMarchantVerificationDto: CheckMarchantVerificationDto) {
     const key = checkMarchantVerificationDto.key
     let wallet = null
     // check marchant ID
-    const rsa = new NodeRSA({ b: 512 })
+    // const rsa = new NodeRSA({ b: 512 })
 
 
     try {
@@ -57,7 +58,7 @@ export class VerificationService {
           if (checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT
             || checkMarchantVerificationDto.action === ActionOperationEnum.CREDIT) {
 
-            const decrypted = decodeURIComponent(JSON.parse(rsa.decrypt(key, 'utf8').toString()))
+            const decrypted = decodeURIComponent(JSON.parse(this.encryptionService.decrypt(key, true)))
             delete checkMarchantVerificationDto.key
             const isIntegrity = isObjectsEqual(decrypted, checkMarchantVerificationDto)
 
