@@ -53,6 +53,12 @@
       ],
       "shared/dto/*": [
         "libs/dto/src/*"
+      ],
+      "shared/encryption": [
+        "libs/encryption/src"
+      ],
+      "shared/encryption/*": [
+        "libs/encryption/src/*"
       ]
     }
   }
