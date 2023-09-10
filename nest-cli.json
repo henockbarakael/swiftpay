@@ -82,6 +82,11 @@
         "tsConfigPath": "libs/types/tsconfig.lib.json"
       }
     },
+    "enums": {
+      "type": "library",
+      "root": "libs/enums",
+      "entryFile": "index"
+    },
     "redis": {
       "type": "library",
       "root": "libs/redis",
@@ -89,6 +94,42 @@
       "sourceRoot": "libs/redis/src",
       "compilerOptions": {
         "tsConfigPath": "libs/redis/tsconfig.lib.json"
+      }
+    },
+    "constants": {
+      "type": "library",
+      "root": "libs/constants",
+      "entryFile": "index",
+      "sourceRoot": "libs/constants/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/constants/tsconfig.lib.json"
+      }
+    },
+    "auth-utils": {
+      "type": "library",
+      "root": "libs/auth-utils",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth-utils/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth-utils/tsconfig.lib.json"
+      }
+    },
+    "dto": {
+      "type": "library",
+      "root": "libs/dto",
+      "entryFile": "index",
+      "sourceRoot": "libs/dto/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/dto/tsconfig.lib.json"
+      }
+    },
+    "encryption": {
+      "type": "library",
+      "root": "libs/encryption",
+      "entryFile": "index",
+      "sourceRoot": "libs/encryption/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/encryption/tsconfig.lib.json"
       }
     }
   }

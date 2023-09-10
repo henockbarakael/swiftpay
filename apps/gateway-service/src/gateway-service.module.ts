@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GatewayServiceController } from './gateway-service.controller';
 import { GatewayServiceService } from './gateway-service.service';
+import { VerificationModule } from './verification/verification.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -20,6 +21,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         },
       },
     ]),
+    VerificationModule
   ],
   controllers: [GatewayServiceController],
   providers: [GatewayServiceService],
