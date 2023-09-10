@@ -1,9 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MarchantService } from './marchant.service';
 import { CreateMarchantDto } from './dto/create-marchant.dto';
 import { UpdateMarchantDto } from './dto/update-marchant.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationDto } from 'shared/dto';
 
 @ApiTags('marchant')
 @Controller('marchant')
@@ -15,18 +23,16 @@ export class MarchantController {
     return this.marchantService.create(createMarchantDto);
   }
 
-  @Get()
-  findAll(@Query() marchantQuery: PaginationDto) {
-    return this.marchantService.findAll(marchantQuery);
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.marchantService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMarchantDto: UpdateMarchantDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMarchantDto: UpdateMarchantDto,
+  ) {
     return this.marchantService.update(id, updateMarchantDto);
   }
 

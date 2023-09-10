@@ -33,9 +33,8 @@ export class VerificationService {
         },
       });
 
-      const [existService, existCurrency] = await this.checkServiceAndCurrency(
-        checkMarchantVerificationDto,
-      );
+      const { existService, existCurrency } =
+        await this.checkServiceAndCurrency(checkMarchantVerificationDto);
 
       if (Object.keys(existMarchant).length !== 0) {
         if (existService.length !== 0 && existCurrency.length !== 0) {
@@ -166,7 +165,7 @@ export class VerificationService {
       }),
     ]);
 
-    return [existService, existCurrency];
+    return { existService, existCurrency };
   }
 
   async integrityCheck(

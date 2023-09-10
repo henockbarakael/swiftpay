@@ -1,8 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { UserSupportService } from './user-support.service';
 import { CreateUserSupportDto } from './dto/create-user-support.dto';
 import { UpdateUserSupportDto } from './dto/update-user-support.dto';
-import { PaginationDto } from 'shared/dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('user-support')
@@ -15,18 +23,16 @@ export class UserSupportController {
     return this.userSupportService.create(createUserSupportDto);
   }
 
-  @Get()
-  findAll(@Query() userSupportQuery: PaginationDto) {
-    return this.userSupportService.findAll(userSupportQuery);
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userSupportService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserSupportDto: UpdateUserSupportDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserSupportDto: UpdateUserSupportDto,
+  ) {
     return this.userSupportService.update(id, updateUserSupportDto);
   }
 

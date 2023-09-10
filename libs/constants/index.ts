@@ -1,7 +1,3 @@
-export * from './src/constants.module';
-export * from './src/constants.service';
-
-
 export const FORBIDDEN_TO_LOGIN_MESSAGE =
   "Vous n'êtes pas authorisé à acceder à la plateforme .";
 
@@ -17,7 +13,7 @@ export const CREATE_USER_FAIL_MESSAGE = 'Cant create user';
 export const NOTIFICATION_FAIL_MESSAGE = 'Nofitication fails';
 
 export const USER_ACTIVE_ALREADY_MESSAGE = 'User already active';
-export const PASSWORD_FAIL_MESSAGE='Mot de passe erroné'
+export const PASSWORD_FAIL_MESSAGE = 'Mot de passe erroné';
 
 export const FIND_USER_FAIL_MESSAGE = 'Cant find user account to enable';
 
@@ -32,4 +28,3 @@ export const UPLOAD_IMAGE_SUCCESSFULLY_MESSAGE = 'Image upload successful';
 export const FAILED_LOGIN_ATTEMPTS_MESSAGE = 'Failed login attempts ';
 
 export const USER_ACCOUNT_ENABLED_MESSAGE = 'User account enabled ';
-
