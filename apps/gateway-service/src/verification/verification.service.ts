@@ -14,6 +14,9 @@ export class VerificationService {
   constructor(
     private dbService: DatabaseService,
     @Inject('NOTIFICATION_SERVICE') private notificationService: ClientKafka,
+    @Inject('NOTIFICATION_SERVICE') private VodacomClient: ClientKafka,
+    @Inject('NOTIFICATION_SERVICE') private AirtelClient: ClientKafka,
+    @Inject('NOTIFICATION_SERVICE') private OrangeClient: ClientKafka,
     private encryptionService: EncryptionService,
   ) {}
 
@@ -26,7 +29,7 @@ export class VerificationService {
     try {
       const existMarchant = await this.dbService.merchant.findUniqueOrThrow({
         where: {
-          id: checkMarchantVerificationDto.machantID,
+          id: checkMarchantVerificationDto.merchantID,
         },
         include: {
           user: true,
@@ -104,13 +107,13 @@ export class VerificationService {
             );
 
             // service authorization check
-            const isServiceAuthorization = await this.serviceAuthorizationCheck(
+            const isServiceRestricted = await this.serviceAuthorizationCheck(
               checkMarchantVerificationDto.service,
               checkMarchantVerificationDto.merchantID,
             );
 
             // action autorization
-            const isAuthorizedAction = await this.actionAuthorizationCheck(
+            const isActionRestricted = await this.actionAuthorizationCheck(
               checkMarchantVerificationDto.action,
               checkMarchantVerificationDto.merchantID,
             );
@@ -119,7 +122,17 @@ export class VerificationService {
             const isTransactionLimited = await this.transactionLimitCheck(
               checkMarchantVerificationDto.merchantID,
               checkMarchantVerificationDto.amount,
+              checkMarchantVerificationDto.currency,
             );
+
+            if (
+              isBlacklisted ||
+              isServiceRestricted ||
+              isActionRestricted ||
+              isTransactionLimited
+            ) {
+              return false;
+            }
 
             // write to kafka
 
@@ -212,9 +225,9 @@ export class VerificationService {
     );
 
     if (restriction !== undefined) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   async actionAuthorizationCheck(action: string, merchantId: string) {
@@ -230,24 +243,27 @@ export class VerificationService {
     );
 
     if (restriction !== undefined) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
-  async transactionLimitCheck(merchantId: string, amount: number) {
+  async transactionLimitCheck(
+    merchantId: string,
+    amount: number,
+    currency: string,
+  ) {
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
         merchantId: merchantId,
         type: 'TRANSACTION',
+        key: currency === 'CDF' ? 'LIMIT_CDF' : 'LIMIT_USD',
       },
     });
 
-    const restriction = params.find((e) => parseFloat(e.value) > amount);
-
-    if (restriction !== undefined) {
-      return true;
+    if (parseFloat(params[0].value) > amount) {
+      return false;
     }
-    return false;
+    return true;
   }
 }
