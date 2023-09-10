@@ -131,6 +131,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/encryption/tsconfig.lib.json"
       }
+    },
+    "wallet": {
+      "type": "library",
+      "root": "libs/wallet",
+      "entryFile": "index",
+      "sourceRoot": "libs/wallet/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/wallet/tsconfig.lib.json"
+      }
     }
   }
 }

@@ -204,6 +204,7 @@ model Currency {
   currency       CurrencyEnum     @default(USD)
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
+  MerchantWallet MerchantWallet[]
 
   @@map("currency")
 }
@@ -267,7 +268,9 @@ model MerchantWallet {
 
   service               Service                 @relation(fields: [serviceId], references: [id])
   merchant              Merchant                @relation(fields: [merchantId], references: [id])
+  currency              Currency                @relation(fields: [currencyId], references: [id])
   MerchantWalletHistory MerchantWalletHistory[]
+  currencyId            String
 
   @@index([merchantId])
   @@map("merchant_wallet")

@@ -18,48 +18,22 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "shared/database": [
-        "libs/database/src"
-      ],
-      "shared/database/*": [
-        "libs/database/src/*"
-      ],
-      "shared/types": [
-        "libs/types"
-      ],
-      "shared/types/*": [
-        "libs/types/*"
-      ],
-      "shared/redis": [
-        "libs/redis/src"
-      ],
-      "shared/redis/*": [
-        "libs/redis/src/*"
-      ],
-      "shared/constants": [
-        "libs/constants/src"
-      ],
-      "shared/constants/*": [
-        "libs/constants/src/*"
-      ],
-      "shared/auth-utils": [
-        "libs/auth-utils/src"
-      ],
-      "shared/auth-utils/*": [
-        "libs/auth-utils/src/*"
-      ],
-      "shared/dto": [
-        "libs/dto/src"
-      ],
-      "shared/dto/*": [
-        "libs/dto/src/*"
-      ],
-      "shared/encryption": [
-        "libs/encryption/src"
-      ],
-      "shared/encryption/*": [
-        "libs/encryption/src/*"
-      ]
+      "shared/database": ["libs/database/src"],
+      "shared/database/*": ["libs/database/src/*"],
+      "shared/types": ["libs/types"],
+      "shared/types/*": ["libs/types/*"],
+      "shared/redis": ["libs/redis/src"],
+      "shared/redis/*": ["libs/redis/src/*"],
+      "shared/constants": ["libs/constants/src"],
+      "shared/constants/*": ["libs/constants/src/*"],
+      "shared/auth-utils": ["libs/auth-utils/src"],
+      "shared/auth-utils/*": ["libs/auth-utils/src/*"],
+      "shared/dto": ["libs/dto/src"],
+      "shared/dto/*": ["libs/dto/src/*"],
+      "shared/encryption": ["libs/encryption/src"],
+      "shared/encryption/*": ["libs/encryption/src/*"],
+      "shared/wallet": ["libs/wallet/src"],
+      "shared/wallet/*": ["libs/wallet/src/*"]
     }
   }
 }
