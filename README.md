@@ -32,6 +32,20 @@
 $ npm install
 ```
 
+### Merchant Account Parameter Naming
+
+```bash
+ type : SERVICE, TRANSACTION
+ key : LIMIT, RESTRICT
+ value : VODACOM, ORANGE, AIRTEL, AFRICELL, 10.000
+
+ ex : 
+
+ SERVICE RESTRICT VODACOM
+ TRANSACTION LIMIT 5.000
+
+``` 
+
 ## Running the app
 
 ```bash

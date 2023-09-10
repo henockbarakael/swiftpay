@@ -200,7 +200,12 @@ export class VerificationService {
   }
 
   async serviceAuthorizationCheck(service: string, merchantId: string) {
-    const params = "" 
+    const params = await this.dbService.merchantAccountParameter.findMany({
+      where: {
+        merchantId: merchantId,
+        type: 'SERVICE',
+      },
+    });
   }
 
   async actionAuthorizationCheck(action: string, merchantId: string) {}
