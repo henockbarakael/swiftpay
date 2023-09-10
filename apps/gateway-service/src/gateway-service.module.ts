@@ -1,9 +1,26 @@
 import { Module } from '@nestjs/common';
 import { GatewayServiceController } from './gateway-service.controller';
 import { GatewayServiceService } from './gateway-service.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  imports: [],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'gateway',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'gateway',
+            brokers: process.env.KAFKA_BROKERS.split(','),
+          },
+          consumer: {
+            groupId: 'gateway',
+          },
+        },
+      },
+    ]),
+  ],
   controllers: [GatewayServiceController],
   providers: [GatewayServiceService],
 })
