@@ -14,9 +14,7 @@ export class VerificationService {
   constructor(
     private dbService: DatabaseService,
     @Inject('NOTIFICATION_SERVICE') private notificationService: ClientKafka,
-    @Inject('NOTIFICATION_SERVICE') private VodacomClient: ClientKafka,
-    @Inject('NOTIFICATION_SERVICE') private AirtelClient: ClientKafka,
-    @Inject('NOTIFICATION_SERVICE') private OrangeClient: ClientKafka,
+    @Inject('gateway') private gatewayClient: ClientKafka,
     private encryptionService: EncryptionService,
   ) {}
 
@@ -24,7 +22,6 @@ export class VerificationService {
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
   ) {
     const key = checkMarchantVerificationDto.key;
-    let wallet = null;
 
     try {
       const existMarchant = await this.dbService.merchant.findUniqueOrThrow({
@@ -53,7 +50,7 @@ export class VerificationService {
             // check if the customer number match operator schemas
             if (
               !checkValidOperator(
-                checkMarchantVerificationDto.customerNumber,
+                checkMarchantVerificationDto.phoneNumber,
                 existService[0].name,
               )
             ) {
@@ -72,38 +69,18 @@ export class VerificationService {
                 serviceId: existService[0].id,
                 transactionStatusId: 'PENDING',
                 reference: referenceGenerator(),
-                customerNumber: checkMarchantVerificationDto.customerNumber,
+                customerNumber: checkMarchantVerificationDto.phoneNumber,
               },
             });
 
             // verifify integrity
-            if (isIntegrity) {
-              wallet = await this.dbService.merchantWallet.findMany({
-                where: {
-                  AND: [
-                    {
-                      merchantId: existMarchant.id,
-                    },
-                    {
-                      balance: checkMarchantVerificationDto.amount,
-                    },
-                  ],
-                },
-              });
-              this.notificationService.send(
-                'send-wallet-verification',
-                JSON.stringify({
-                  to: existMarchant.user.email,
-                  marchant: existMarchant.user,
-                }),
-              );
-            } else {
+            if (!isIntegrity) {
               return false;
             }
 
             // blacklist check
             const isBlacklisted = await this.blacklistCheck(
-              checkMarchantVerificationDto.customerNumber,
+              checkMarchantVerificationDto.phoneNumber,
             );
 
             // service authorization check
@@ -135,8 +112,18 @@ export class VerificationService {
             }
 
             // write to kafka
+            const topic = existService[0].name.toLowerCase();
+            this.gatewayClient.emit(topic, {
+              merchantID: checkMarchantVerificationDto.merchantID,
+              phoneNumber: checkMarchantVerificationDto.phoneNumber,
+              amount: checkMarchantVerificationDto.amount,
+              currency: checkMarchantVerificationDto.currency,
+              service: checkMarchantVerificationDto.service,
+              reference: checkMarchantVerificationDto.reference,
+              action: checkMarchantVerificationDto.action,
+            });
 
-            // send ACK
+            return true;
           } else {
             return false;
           }

@@ -9,7 +9,7 @@ export class CreateVerificationDto {
   merchantID: number;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
+  @IsPhoneNumber('CD')
   phoneNumber: number;
 
   @IsNotEmpty()
@@ -29,9 +29,6 @@ export class CreateVerificationDto {
 
   @IsNotEmpty()
   action: ActionOperationEnum;
-
-  @IsPhoneNumber('CD')
-  customerNumber: string;
 }
 
 export class CheckMarchantVerificationDto {
@@ -39,7 +36,7 @@ export class CheckMarchantVerificationDto {
   merchantID: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
+  @IsPhoneNumber('CD')
   phoneNumber: string;
 
   @IsNotEmpty()
@@ -59,7 +56,4 @@ export class CheckMarchantVerificationDto {
 
   @IsNotEmpty()
   action: ActionOperationEnum;
-
-  @IsPhoneNumber('CD')
-  customerNumber: string;
 }

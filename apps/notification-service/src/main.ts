@@ -7,22 +7,19 @@ async function bootstrap() {
   const app = await NestFactory.create(NotificationServiceModule);
   const configService = app.get(ConfigService);
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: configService.get('KAFKA_BROKERS').split(','),
+      },
+      consumer: {
+        groupId: configService.get('KAFKA_NOTIFICATION_CONSUMER_ID'),
+      },
+    },
+  });
 
-  app.connectMicroservice<MicroserviceOptions>(
-    {
-      transport: Transport.KAFKA,
-      options: {
-        client : {
-          brokers:  configService.get('KAFKA_BROKERS').split(',')
-        },
-        consumer : {
-          groupId:  configService.get('KAFKA_NOTIFICATION_CONSUMER_ID')
-        }
-      }
-    }
-  )
-
-  await app.startAllMicroservices()
+  await app.startAllMicroservices();
   await app.listen(configService.get('NOTIFICATION_MICROSERVICE_PORT'));
 }
 bootstrap();
