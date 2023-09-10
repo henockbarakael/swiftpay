@@ -206,9 +206,48 @@ export class VerificationService {
         type: 'SERVICE',
       },
     });
+
+    const restriction = params.find(
+      (e) => e.value.toLowerCase() === service.toLowerCase(),
+    );
+
+    if (restriction !== undefined) {
+      return true;
+    }
+    return false;
   }
 
-  async actionAuthorizationCheck(action: string, merchantId: string) {}
+  async actionAuthorizationCheck(action: string, merchantId: string) {
+    const params = await this.dbService.merchantAccountParameter.findMany({
+      where: {
+        merchantId: merchantId,
+        type: 'ACTION',
+      },
+    });
 
-  async transactionLimitCheck(merchantId: string, amount: number) {}
+    const restriction = params.find(
+      (e) => e.value.toLowerCase() === action.toLowerCase(),
+    );
+
+    if (restriction !== undefined) {
+      return true;
+    }
+    return false;
+  }
+
+  async transactionLimitCheck(merchantId: string, amount: number) {
+    const params = await this.dbService.merchantAccountParameter.findMany({
+      where: {
+        merchantId: merchantId,
+        type: 'TRANSACTION',
+      },
+    });
+
+    const restriction = params.find((e) => parseFloat(e.value) > amount);
+
+    if (restriction !== undefined) {
+      return true;
+    }
+    return false;
+  }
 }
