@@ -106,10 +106,10 @@ model Merchant {
   deletedAt     DateTime?
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
-  institution              Institution               @relation(fields: [institutionId], references: [id])
-  user                     User                      @relation(fields: [userId], references: [id])
+  institution              Institution                @relation(fields: [institutionId], references: [id])
+  user                     User                       @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
-  MerchantAccountParameter MerchantAccountParameter?
+  MerchantAccountParameter MerchantAccountParameter[]
   accountStatusId          String
 
   @@unique([userId])
@@ -141,6 +141,7 @@ model Transaction {
   telcoStatusDescription String
   reference              String
   telcoReference         String
+  customerNumber         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
   deletedAt              DateTime?
@@ -170,6 +171,7 @@ model DailyOperation {
   telcoStatusDescription String
   reference              String
   telcoReference         String
+  customerNumber         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
   deletedAt              DateTime?
@@ -292,7 +294,7 @@ model MerchantAccountParameter {
   id         String   @id @default(uuid())
   key        String
   value      String
-  merchantId String   @unique
+  merchantId String
   type       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
