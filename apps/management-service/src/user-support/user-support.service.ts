@@ -3,7 +3,7 @@ import { CreateUserSupportDto } from './dto/create-user-support.dto';
 import { UpdateUserSupportDto } from './dto/update-user-support.dto';
 import { DatabaseService } from 'shared/database';
 import { PaginationDto } from 'shared/dto';
-import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'shared/constants';
+import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'libs/constants';
 
 @Injectable()
 export class UserSupportService {

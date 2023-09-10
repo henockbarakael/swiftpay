@@ -3,7 +3,7 @@ import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/c
 import { CreateMarchantDto } from './dto/create-marchant.dto';
 import { UpdateMarchantDto } from './dto/update-marchant.dto';
 import { DatabaseService } from 'shared/database';
-import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'shared/constants';
+import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'libs/constants';
 import { PaginationDto } from 'shared/dto';
 
 @Injectable()

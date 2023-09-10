@@ -1,5 +1,5 @@
-export * from './constants.module';
-export * from './constants.service';
+export * from './src/constants.module';
+export * from './src/constants.service';
 
 
 export const FORBIDDEN_TO_LOGIN_MESSAGE =

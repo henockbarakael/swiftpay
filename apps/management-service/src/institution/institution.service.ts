@@ -2,7 +2,7 @@ import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/c
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { DatabaseService } from 'shared/database';
-import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'shared/constants';
+import { CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE } from 'libs/constants';
 
 @Injectable()
 export class InstitutionService {
