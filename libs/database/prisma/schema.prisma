@@ -10,6 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Models
 model Permission {
   id             String           @id @default(uuid())
   name           String
@@ -43,7 +44,8 @@ model Role {
   slug            String           @unique
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  permissionId    Int
+  deletedAt       DateTime?
+  permissionId    String
   rolePermissions RolePermission[]
   userRoles       UserRole[]
 
@@ -51,11 +53,12 @@ model Role {
 }
 
 model UserRole {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
   userId    String
   roleId    String
 
@@ -87,6 +90,7 @@ model User {
   temporaryLockedAt DateTime?
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+  deletedAt         DateTime?
   userRoles         UserRole[]
   marchant          Merchant?
   userSupport       UserSupport?
@@ -99,7 +103,7 @@ model Merchant {
   id            String        @id @default(uuid())
   userId        String
   institutionId String
-  key           String        @unique
+  deletedAt     DateTime?
   accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
   institution              Institution                @relation(fields: [institutionId], references: [id])
@@ -113,10 +117,13 @@ model Merchant {
 }
 
 model UserSupport {
-  id     String @id @default(uuid())
-  userId String
+  id              String    @id @default(uuid())
+  userId          String
+  deletedAt       DateTime?
+  accountStatusId String
 
-  user User @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
 
   @@unique([userId])
   @@map("users_support")
@@ -134,8 +141,10 @@ model Transaction {
   telcoStatusDescription String
   reference              String
   telcoReference         String
+  customerNumber         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
+  deletedAt              DateTime?
   dailyOperationId       String
   currencyId             String
   transactionStatusId    String
@@ -162,8 +171,10 @@ model DailyOperation {
   telcoStatusDescription String
   reference              String
   telcoReference         String
+  customerNumber         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
+  deletedAt              DateTime?
   Transaction            Transaction[]
   currencyId             String
   serviceId              String
@@ -181,6 +192,7 @@ model DailyOperation {
 model TransactionStatus {
   id             String           @id @default(uuid())
   status         String
+  deletedAt      DateTime?
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
 
@@ -189,21 +201,22 @@ model TransactionStatus {
 
 model Currency {
   id             String           @id @default(uuid())
-  currency       String
+  currency       CurrencyEnum     @default(USD)
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
-  MerchantWallet MerchantWallet[]
 
   @@map("currency")
 }
 
 model Institution {
-  id        String   @id @default(uuid())
-  name      String
-  email     String
-  tel       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String           @id @default(uuid())
+  name        TelcoServiceEnum
+  email       String
+  phone       String
+  description String?          @db.Text
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
 
   Marchant Merchant[]
 
@@ -211,13 +224,14 @@ model Institution {
 }
 
 model MerchantCommission {
-  id         String   @id @default(uuid())
-  service    Service  @relation(fields: [serviceId], references: [id])
-  action     String
+  id         String              @id @default(uuid())
+  action     ActionOperationEnum
   commission Float
-  createdAt  DateTime @default(now())
-  updateAt   DateTime @updatedAt
+  createdAt  DateTime            @default(now())
+  updateAt   DateTime            @updatedAt
+  deletedAt  DateTime?
   serviceId  String
+  service    Service             @relation(fields: [serviceId], references: [id])
 
   @@index([serviceId])
   @@map("merchant_commission")
@@ -225,8 +239,9 @@ model MerchantCommission {
 
 model Service {
   id                 String               @id @default(uuid())
-  name               String               @unique
+  name               TelcoServiceEnum
   serviceTopic       String
+  deletedAt          DateTime?
   MerchantCommission MerchantCommission[]
   MerchantWallet     MerchantWallet[]
   Transaction        Transaction[]
@@ -236,38 +251,39 @@ model Service {
 }
 
 model AccountStatus {
-  id       String     @id @default(uuid())
-  name     String
-  Merchant Merchant[]
+  id          String        @id @default(uuid())
+  name        String
+  Merchant    Merchant[]
+  UserSupport UserSupport[]
 
   @@map("account_status")
 }
 
 model MerchantWallet {
-  id                    String                  @id @default(uuid())
+  id         String @id @default(uuid())
+  balance    Float
+  serviceId  String
+  merchantId String
+
   service               Service                 @relation(fields: [serviceId], references: [id])
   merchant              Merchant                @relation(fields: [merchantId], references: [id])
-  balance               Float
-  currency              Currency                @relation(fields: [currencyId], references: [id])
-  serviceId             String
-  merchantId            String
   MerchantWalletHistory MerchantWalletHistory[]
-  currencyId            String
 
   @@index([merchantId])
   @@map("merchant_wallet")
 }
 
 model MerchantWalletHistory {
-  id               String         @id @default(uuid())
-  merchantWallet   MerchantWallet @relation(fields: [merchantWalletId], references: [id])
-  action           String
+  id               String              @id @default(uuid())
+  action           ActionOperationEnum
   amount           Float
   previousBalance  Float
   actualBalance    Float
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
   merchantWalletId String
+
+  merchantWallet MerchantWallet @relation(fields: [merchantWalletId], references: [id])
 
   @@index([merchantWalletId])
   @@index([action])
@@ -276,13 +292,13 @@ model MerchantWalletHistory {
 
 model MerchantAccountParameter {
   id         String   @id @default(uuid())
-  merchant   Merchant @relation(fields: [merchantId], references: [id])
-  type       String
   key        String
   value      String
   merchantId String
+  type       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
 
   @@map("merchant_wallet_parameter")
 }
@@ -308,14 +324,15 @@ model BlacklistNumber {
 }
 
 model AuditLog {
-  id            String   @id @default(uuid())
-  user          User     @relation(fields: [userId], references: [id])
-  action        String
+  id            String              @id @default(uuid())
+  action        ActionOperationEnum
   modifiedTable String
   oldValue      String
   newValue      String
-  createdAt     DateTime @default(now())
+  createdAt     DateTime            @default(now())
+  deletedAt     DateTime?
   userId        String
+  user          User                @relation(fields: [userId], references: [id])
 
   @@map("audit_log")
 }
@@ -336,4 +353,23 @@ model Notification {
   type NotificationType @relation(fields: [typeId], references: [id])
 
   @@map("notifications")
+}
+
+//Enums
+enum ActionOperationEnum {
+  DEBIT
+  CREDIT
+}
+
+enum CurrencyEnum {
+  USD
+  EUR
+  CDF
+}
+
+enum TelcoServiceEnum {
+  AFRICELL
+  AIRTEL
+  ORANGE
+  VODACOM
 }
