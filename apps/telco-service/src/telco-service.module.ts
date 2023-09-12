@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TelcoServiceController } from './telco-service.controller';
 import { TelcoServiceService } from './telco-service.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ]),
   ],
   controllers: [TelcoServiceController],
-  providers: [TelcoServiceService],
+  providers: [TelcoServiceService, ConfigService],
 })
 export class TelcoServiceModule {}
