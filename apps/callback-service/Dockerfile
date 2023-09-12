@@ -6,6 +6,8 @@ COPY package.json .
 
 RUN npm install
 
+RUN npm run db:generate
+
 COPY . .
 
 RUN npm run build-callback
