@@ -8,8 +8,6 @@ COPY  libs/database/prisma/*  /usr/src/app/libs/database/prisma/
 
 COPY .env /usr/src/app/
 
-ENV NODE_ENV=production
-
 ENV DB_HOST=161.35.161.32
 
 ENV DB_PORT=3306
