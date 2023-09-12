@@ -13,7 +13,6 @@ import { EncryptionService } from 'shared/encryption';
 export class GatewayService {
   constructor(
     private dbService: DatabaseService,
-    @Inject('NOTIFICATION_SERVICE') private notificationService: ClientKafka,
     @Inject('gateway') private gatewayClient: ClientKafka,
     private encryptionService: EncryptionService,
   ) {}

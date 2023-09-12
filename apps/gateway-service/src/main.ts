@@ -3,8 +3,11 @@ import { GatewayModule } from './gateway-service.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
+
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
+  const configService = app.get(ConfigService);
   app.setGlobalPrefix('api');
 
   // on configure les pipe
@@ -32,7 +35,7 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: process.env.KAFKA_BROKERS.split(','),
+        brokers: configService.get('KAFKA_BROKERS').split(','),
       },
       consumer: {
         groupId: 'gateway',
