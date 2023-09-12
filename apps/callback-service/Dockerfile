@@ -4,7 +4,11 @@ WORKDIR /usr/src/app
 
 COPY package.json .
 
+COPY  libs/database/prisma/*  /usr/src/app/libs/database/prisma/
+
 RUN npm install
+
+RUN npm run db:generate
 
 COPY . .
 
