@@ -7,17 +7,17 @@ export class TelcoServiceController {
   constructor(private readonly telcoServiceService: TelcoServiceService) {}
 
   @EventPattern('vodacom')
-  handleVodacomRequest(data: any){
-    this.telcoServiceService.handleTelcoRequest(data.value)
+  handleVodacomRequest(data: any) {
+    this.telcoServiceService.handleTelcoRequest(data.value);
   }
 
   @EventPattern('airtel')
-  handleAirtelRequest(data: any){
-    this.telcoServiceService.handleTelcoRequest(data.value)
+  handleAirtelRequest(data: any) {
+    this.telcoServiceService.handleTelcoRequest(data.value);
   }
 
   @EventPattern('orange')
-  handleOrangeRequest(data: any){
-    this.telcoServiceService.handleTelcoRequest(data.value)
+  handleOrangeRequest(data: any) {
+    this.telcoServiceService.handleTelcoRequest(data.value);
   }
 }

@@ -13,8 +13,7 @@ export class TelcoServiceService {
     // call axios to send request to freshpay
     // wait for a callback
     // process the callback
-    console.log(data)
+    console.log(data);
     return;
   }
-
 }
