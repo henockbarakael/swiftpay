@@ -20,7 +20,7 @@ ENV DB_USER=agregator
 
 ENV DB_PASSWORD=e5J^53&5sH8f
 
-ENV DATABASE_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public"
+ENV DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public
 
 RUN npm install
 
