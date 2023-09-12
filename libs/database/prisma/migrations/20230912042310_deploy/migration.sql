@@ -32,7 +32,8 @@ CREATE TABLE `roles` (
     `slug` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
-    `permissionId` INTEGER NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
+    `permissionId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `roles_slug_key`(`slug`),
     PRIMARY KEY (`id`)
@@ -45,6 +46,7 @@ CREATE TABLE `user_roles` (
     `slug` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
     `userId` VARCHAR(191) NOT NULL,
     `roleId` VARCHAR(191) NOT NULL,
 
@@ -75,6 +77,7 @@ CREATE TABLE `users` (
     `temporaryLockedAt` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     UNIQUE INDEX `users_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -82,9 +85,10 @@ CREATE TABLE `users` (
 
 -- CreateTable
 CREATE TABLE `marchants` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `institutionId` VARCHAR(191) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
     `accountStatusId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `marchants_userId_key`(`userId`),
@@ -93,8 +97,10 @@ CREATE TABLE `marchants` (
 
 -- CreateTable
 CREATE TABLE `users_support` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
+    `accountStatusId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `users_support_userId_key`(`userId`),
     PRIMARY KEY (`id`)
@@ -109,8 +115,10 @@ CREATE TABLE `transaction` (
     `telcoStatusDescription` VARCHAR(191) NOT NULL,
     `reference` VARCHAR(191) NOT NULL,
     `telcoReference` VARCHAR(191) NOT NULL,
+    `customerNumber` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
     `dailyOperationId` VARCHAR(191) NOT NULL,
     `currencyId` VARCHAR(191) NOT NULL,
     `transactionStatusId` VARCHAR(191) NOT NULL,
@@ -135,8 +143,10 @@ CREATE TABLE `daily_operation` (
     `telcoStatusDescription` VARCHAR(191) NOT NULL,
     `reference` VARCHAR(191) NOT NULL,
     `telcoReference` VARCHAR(191) NOT NULL,
+    `customerNumber` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
     `currencyId` VARCHAR(191) NOT NULL,
     `serviceId` VARCHAR(191) NOT NULL,
     `transactionStatusId` VARCHAR(191) NOT NULL,
@@ -154,6 +164,7 @@ CREATE TABLE `daily_operation` (
 CREATE TABLE `transaction_status` (
     `id` VARCHAR(191) NOT NULL,
     `status` VARCHAR(191) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -161,7 +172,7 @@ CREATE TABLE `transaction_status` (
 -- CreateTable
 CREATE TABLE `currency` (
     `id` VARCHAR(191) NOT NULL,
-    `currency` VARCHAR(191) NOT NULL,
+    `currency` ENUM('USD', 'EUR', 'CDF') NOT NULL DEFAULT 'USD',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -169,11 +180,13 @@ CREATE TABLE `currency` (
 -- CreateTable
 CREATE TABLE `institution` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
+    `name` ENUM('AFRICELL', 'AIRTEL', 'ORANGE', 'VODACOM') NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `tel` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `description` TEXT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -181,10 +194,11 @@ CREATE TABLE `institution` (
 -- CreateTable
 CREATE TABLE `merchant_commission` (
     `id` VARCHAR(191) NOT NULL,
-    `action` VARCHAR(191) NOT NULL,
+    `action` ENUM('DEBIT', 'CREDIT') NOT NULL,
     `commission` DOUBLE NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
     `serviceId` VARCHAR(191) NOT NULL,
 
     INDEX `merchant_commission_serviceId_idx`(`serviceId`),
@@ -194,8 +208,9 @@ CREATE TABLE `merchant_commission` (
 -- CreateTable
 CREATE TABLE `service` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
+    `name` ENUM('AFRICELL', 'AIRTEL', 'ORANGE', 'VODACOM') NOT NULL,
     `serviceTopic` VARCHAR(191) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -213,7 +228,8 @@ CREATE TABLE `merchant_wallet` (
     `id` VARCHAR(191) NOT NULL,
     `balance` DOUBLE NOT NULL,
     `serviceId` VARCHAR(191) NOT NULL,
-    `merchantId` INTEGER NOT NULL,
+    `merchantId` VARCHAR(191) NOT NULL,
+    `currencyId` VARCHAR(191) NOT NULL,
 
     INDEX `merchant_wallet_merchantId_idx`(`merchantId`),
     PRIMARY KEY (`id`)
@@ -222,7 +238,7 @@ CREATE TABLE `merchant_wallet` (
 -- CreateTable
 CREATE TABLE `merchant_wallet_history` (
     `id` VARCHAR(191) NOT NULL,
-    `action` VARCHAR(191) NOT NULL,
+    `action` ENUM('DEBIT', 'CREDIT') NOT NULL,
     `amount` DOUBLE NOT NULL,
     `previousBalance` DOUBLE NOT NULL,
     `actualBalance` DOUBLE NOT NULL,
@@ -238,14 +254,13 @@ CREATE TABLE `merchant_wallet_history` (
 -- CreateTable
 CREATE TABLE `merchant_wallet_parameter` (
     `id` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
     `key` VARCHAR(191) NOT NULL,
     `value` VARCHAR(191) NOT NULL,
-    `merchantId` INTEGER NOT NULL,
+    `merchantId` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `merchant_wallet_parameter_merchantId_key`(`merchantId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -274,12 +289,30 @@ CREATE TABLE `blacklist_number` (
 -- CreateTable
 CREATE TABLE `audit_log` (
     `id` VARCHAR(191) NOT NULL,
-    `action` VARCHAR(191) NOT NULL,
+    `action` ENUM('DEBIT', 'CREDIT') NOT NULL,
     `modifiedTable` VARCHAR(191) NOT NULL,
     `oldValue` VARCHAR(191) NOT NULL,
     `newValue` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deletedAt` DATETIME(3) NULL,
     `userId` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `notifications_type` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `notifications` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `typeId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -307,6 +340,9 @@ ALTER TABLE `marchants` ADD CONSTRAINT `marchants_userId_fkey` FOREIGN KEY (`use
 
 -- AddForeignKey
 ALTER TABLE `users_support` ADD CONSTRAINT `users_support_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `users_support` ADD CONSTRAINT `users_support_accountStatusId_fkey` FOREIGN KEY (`accountStatusId`) REFERENCES `account_status`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `transaction` ADD CONSTRAINT `transaction_dailyOperationId_fkey` FOREIGN KEY (`dailyOperationId`) REFERENCES `daily_operation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -339,6 +375,9 @@ ALTER TABLE `merchant_wallet` ADD CONSTRAINT `merchant_wallet_serviceId_fkey` FO
 ALTER TABLE `merchant_wallet` ADD CONSTRAINT `merchant_wallet_merchantId_fkey` FOREIGN KEY (`merchantId`) REFERENCES `marchants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `merchant_wallet` ADD CONSTRAINT `merchant_wallet_currencyId_fkey` FOREIGN KEY (`currencyId`) REFERENCES `currency`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `merchant_wallet_history` ADD CONSTRAINT `merchant_wallet_history_merchantWalletId_fkey` FOREIGN KEY (`merchantWalletId`) REFERENCES `merchant_wallet`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -346,3 +385,6 @@ ALTER TABLE `merchant_wallet_parameter` ADD CONSTRAINT `merchant_wallet_paramete
 
 -- AddForeignKey
 ALTER TABLE `audit_log` ADD CONSTRAINT `audit_log_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `notifications` ADD CONSTRAINT `notifications_typeId_fkey` FOREIGN KEY (`typeId`) REFERENCES `notifications_type`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
