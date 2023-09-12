@@ -8,7 +8,7 @@ import { MailModule } from './mail/mail.module';
   imports: [
     ClientsModule.register([
       {
-        name:'NOTIFICATION_SERVICE',
+        name: 'NOTIFICATION_SERVICE',
         transport: Transport.KAFKA,
         options: {
           client: {

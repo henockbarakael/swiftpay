@@ -6,6 +6,8 @@ COPY package.json .
 
 COPY  libs/database/prisma/*  /usr/src/app/libs/database/prisma/
 
+COPY .env /usr/src/app/
+
 RUN npm install
 
 RUN npm run db:generate
