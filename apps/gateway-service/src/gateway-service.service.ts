@@ -141,6 +141,7 @@ export class GatewayService {
   async checkServiceAndCurrency(
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
   ) {
+    console.log('Check Merchant');
     const [existService, existCurrency] = await Promise.all([
       // check service
       await this.dbService.service.findMany({
@@ -171,6 +172,8 @@ export class GatewayService {
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
     key: string,
   ) {
+    console.log('Check Integrity');
+
     const decrypted = decodeURIComponent(
       JSON.parse(this.encryptionService.decrypt(key, true)),
     );
@@ -182,6 +185,8 @@ export class GatewayService {
   }
 
   async blacklistCheck(phone: string) {
+    console.log('Check Blacklist');
+
     const number = await this.dbService.blacklistNumber.findMany({
       where: {
         number: {
@@ -198,6 +203,7 @@ export class GatewayService {
   }
 
   async serviceAuthorizationCheck(service: string, merchantId: string) {
+    console.log('Check Service Auth');
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
         merchantId: merchantId,
@@ -216,6 +222,8 @@ export class GatewayService {
   }
 
   async actionAuthorizationCheck(action: string, merchantId: string) {
+    console.log('Check Action Auth');
+
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
         merchantId: merchantId,
@@ -238,6 +246,8 @@ export class GatewayService {
     amount: number,
     currency: string,
   ) {
+    console.log('Check Limit Transaction');
+
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
         merchantId: merchantId,
