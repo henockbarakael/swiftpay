@@ -20,8 +20,9 @@ export class GatewayService {
     private dbService: DatabaseService,
     @Inject('gateway') private gatewayClient: ClientKafka,
     private encryptionService: EncryptionService,
-    private readonly logger = new Logger(GatewayService.name),
   ) {}
+
+  private readonly logger = new Logger(GatewayService.name);
 
   async checkMarchant(
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
