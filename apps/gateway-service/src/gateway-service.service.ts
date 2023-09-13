@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { CheckMarchantVerificationDto } from './dto/create-verification.dto';
 import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';
@@ -15,6 +20,7 @@ export class GatewayService {
     private dbService: DatabaseService,
     @Inject('gateway') private gatewayClient: ClientKafka,
     private encryptionService: EncryptionService,
+    private readonly logger = new Logger(GatewayService.name),
   ) {}
 
   async checkMarchant(
@@ -132,16 +138,14 @@ export class GatewayService {
         return false;
       }
     } catch (error) {
-      throw new NotAcceptableException(
-        'Impossible de valider votre verifaction',
-      );
+      throw new NotAcceptableException(error);
     }
   }
 
   async checkServiceAndCurrency(
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
   ) {
-    console.log('Check Merchant');
+    this.logger.log('Check Merchant');
     const [existService, existCurrency] = await Promise.all([
       // check service
       await this.dbService.service.findMany({
@@ -172,7 +176,7 @@ export class GatewayService {
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
     key: string,
   ) {
-    console.log('Check Integrity');
+    this.logger.log('Check Integrity');
 
     const decrypted = decodeURIComponent(
       JSON.parse(this.encryptionService.decrypt(key, true)),
@@ -185,7 +189,7 @@ export class GatewayService {
   }
 
   async blacklistCheck(phone: string) {
-    console.log('Check Blacklist');
+    this.logger.log('Check Blacklist');
 
     const number = await this.dbService.blacklistNumber.findMany({
       where: {
@@ -203,7 +207,7 @@ export class GatewayService {
   }
 
   async serviceAuthorizationCheck(service: string, merchantId: string) {
-    console.log('Check Service Auth');
+    this.logger.log('Check Service Auth');
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
         merchantId: merchantId,
@@ -222,7 +226,7 @@ export class GatewayService {
   }
 
   async actionAuthorizationCheck(action: string, merchantId: string) {
-    console.log('Check Action Auth');
+    this.logger.log('Check Action Auth');
 
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
@@ -246,7 +250,7 @@ export class GatewayService {
     amount: number,
     currency: string,
   ) {
-    console.log('Check Limit Transaction');
+    this.logger.log('Check Limit Transaction');
 
     const params = await this.dbService.merchantAccountParameter.findMany({
       where: {
