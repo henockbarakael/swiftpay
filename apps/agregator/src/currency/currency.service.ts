@@ -23,8 +23,18 @@ export class CurrencyService {
     }
   }
 
-  findAll() {
-    return `This action returns all currency`;
+  async findAll() {
+    try {
+      return await this.prismaService.currency.findMany({
+        include: {
+          MerchantWallet: true,
+          Transaction: true,
+          DailyOperation: true,
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
+    }
   }
 
   async findOne(id: string) {
