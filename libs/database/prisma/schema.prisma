@@ -45,7 +45,6 @@ model Role {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
-  permissionId    String
   rolePermissions RolePermission[]
   userRoles       UserRole[]
 

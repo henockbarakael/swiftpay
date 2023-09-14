@@ -1,18 +1,8 @@
-import {IsNotEmpty, IsString} from "class-validator";
-import {ApiProperty} from "@nestjs/swagger";
+import { IsNotEmpty, IsString } from 'class-validator';
+import { CreateAuthDto } from '../../auth/dto/create-auth.dto';
 
-export class CreateMerchantDto {
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty()
-    userId: string
+export class CreateMerchantDto extends CreateAuthDto {
+  @IsString()
+  userId: string;
 
-    @IsString()
-    @ApiProperty()
-    @IsNotEmpty()
-    institutionId: string
-
-    @IsNotEmpty()
-    @ApiProperty()
-    accountStatusId: string
 }

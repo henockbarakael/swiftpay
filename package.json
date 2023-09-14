@@ -41,7 +41,7 @@
   },
   "prisma": {
     "schema": "libs/database/prisma/schema.prisma",
-    "seed": "ts-node libs/database/prisma/seed/index.ts"
+    "seed": "ts-node libs/database/prisma/seeders/index.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.7.1",

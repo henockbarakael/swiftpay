@@ -1,71 +1,76 @@
 import { PrismaClient, User } from '@prisma/client';
 import * as argon from 'argon2';
-import { ConfigService } from '@nestjs/config';
-
+import { RoleEnum } from '../../../enums/role.enum';
 
 const prisma = new PrismaClient();
-const configService = new ConfigService();
 
 async function main() {
   // Generate permissions categories
- 
-
-
-  const superAdminPermission = await prisma.permission.upsert({
-    where: { slug: 'master' },
-    update: {},
-    create: {
-      slug: 'master',
-      name: 'Master permission',
-    },
-  });
-
   const superAdminRole = await prisma.role.upsert({
     where: { slug: 'super_admin' },
     update: {},
     create: {
       slug: 'super_admin',
       name: 'SUPER Admin',
-      permissionId: await  (superAdminPermission.then(user => user.id))
     },
   });
 
-  const merchantPermission = await prisma.permission.upsert({
-    where: { slug: 'merchant_permission' },
-    update: {},
-    create: {
-      slug: 'merchant_permission',
-      name: 'merchant permission',
-    },
-  });
   const merchantRole = await prisma.role.upsert({
     where: { slug: 'merchant' },
     update: {},
     create: {
       slug: 'merchant',
       name: 'Merchant',
-      permissionId: await  merchantPermission.then((item)=>item.id)
     },
   });
+  const permissions = ['manage', 'invite', 'create', 'update', 'read'];
 
-  await prisma.rolePermission.create({
-    data: {
-      name: 'admin role permissions',
-      slug: 'admin_role_permissions',
-      roleId: await   superAdminRole.then((item)=>item.id),
-      permissionId: await (superAdminPermission.then(item => item.id)),
-    },
-  });
-
-  await prisma.rolePermission.create({
-    data: {
-      name: 'merchant role permissions',
-      slug: 'merchant_role_permissions',
-      roleId: await (merchantRole.then(item=> item.id)),
-      permissionId: await (merchantPermission.then(item=> item.id)),
-    },
-  });
-
+  for await (const permission of permissions) {
+    await prisma.permission.upsert({
+      where: { slug: permission },
+      update: {},
+      create: {
+        slug: permission,
+        name: `${permission}_permission`,
+      },
+    });
+  }
+  if (superAdminRole.slug === RoleEnum.SUPER_ADMIN) {
+    const permissionsRepo = await prisma.permission.findMany();
+    for await (const permission of permissionsRepo) {
+      await prisma.rolePermission.upsert({
+        where: {
+          slug: permission.slug,
+        },
+        update: {},
+        create: {
+          name: `${superAdminRole.slug}_${permission.slug}`,
+          slug: permission.slug,
+          roleId: superAdminRole.id,
+          permissionId: permission.id,
+        },
+      });
+    }
+  }
+  if (superAdminRole.slug === RoleEnum.MERCHANT) {
+    const permissionsRepo = (await prisma.permission.findMany()).filter(
+      (item) => !item.slug.includes('manage'),
+    );
+    for await (const permission of permissionsRepo) {
+      await prisma.rolePermission.upsert({
+        where: {
+          slug: permission.slug,
+        },
+        update: {},
+        create: {
+          name: `${superAdminRole.slug}_${permission.slug}`,
+          slug: permission.slug,
+          roleId: merchantRole.id,
+          permissionId: permission.id,
+        },
+      });
+    }
+  }
 
   const hash = await argon.hash('Pa$$wr0d');
   const user: Partial<User> = {
@@ -77,30 +82,30 @@ async function main() {
     password: hash,
   } as unknown as Partial<User>;
 
-
   const superAdmin = await prisma.user.upsert({
     where: { email: user.email },
     update: {},
     create: {
-      identifier: user.email,
+      email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      email: user.email,
       isActive: user.isActive,
-      hashedPassword: user.hashedPassword,
+      password: hash,
     },
   });
 
-
-  await prisma.userRole.create({
-    data: {
-      name:'admin user role',
-      slug:'admin_user_role',
+  await prisma.userRole.upsert({
+    where: {
+      slug: 'admin_user_role',
+    },
+    update: {},
+    create: {
+      name: 'admin user role',
+      slug: 'admin_user_role',
       userId: superAdmin.id,
       roleId: superAdminRole.id,
     },
   });
-
 }
 main()
   .then(async () => {
