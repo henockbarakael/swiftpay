@@ -74,7 +74,7 @@ model User {
   firstName         String?
   lastName          String?
   email             String       @unique
-  hashedPassword    String
+  password    String
   salt              String?
   birthDate         DateTime?
   gender            String       @default("M")

@@ -6,6 +6,7 @@ import { DatabaseModule } from 'shared/database';
 import { AuthModule } from './auth/auth.module';
 import { UserSupportModule } from './user-support/user-support.module';
 import { InstitutionModule } from './institution/institution.module';
+import { ServiceModule } from './service/service.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { InstitutionModule } from './institution/institution.module';
     DatabaseModule,
   UserSupportModule,
   InstitutionModule,
+  ServiceModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],

@@ -22,8 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         }
       });
       if (Object.keys(user)) {
-        delete user.hashedPassword;
-        delete user.salt;
+        delete user.password;
         return user as unknown as IUserResponse;
       }
       throw new UnauthorizedException(

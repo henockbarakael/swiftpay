@@ -1,14 +1,15 @@
-import { AuthUtilsService } from '../../../../libs/auth-utils/src/auth-utils.service';
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { LoginDto } from './dto/login.dto';
+import {AuthUtilsService} from '../../../../libs/auth-utils/src/auth-utils.service';
+import {Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import {CreateAuthDto} from './dto/create-auth.dto';
+import {UpdateAuthDto} from './dto/update-auth.dto';
+import {LoginDto} from './dto/login.dto';
 import * as argon from 'argon2';
-import { FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAGE } from 'libs/constants';
-import { IUserResponse } from 'shared/types';
-import { RoleEnum } from 'libs/enums';
-import { DatabaseService } from 'shared/database';
-import { MarchantService } from '../marchant/marchant.service';
+import {FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAGE} from 'libs/constants';
+import {IUserResponse} from 'shared/types';
+import {RoleEnum} from 'libs/enums';
+import {DatabaseService} from 'shared/database';
+import {MarchantService} from '../marchant/marchant.service';
+import {CreateMarchantDto} from "../marchant/dto/create-marchant.dto";
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,7 @@ export class AuthService {
         throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
       } else {
         const pwdMatches = await argon.verify(
-          userRepo.hashedPassword,
+          userRepo.password,
           password,
         );
         const userRO = userRepo as unknown as IUserResponse
@@ -47,9 +48,38 @@ export class AuthService {
       throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
     }
   }
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  async  register(payload: CreateAuthDto) {
+
+    try{
+      const hash = await argon.hash(payload.password);
+      const data = { ...payload };
+      const roleSlug = data.role;
+      const role = await this.prismaService.role.findUniqueOrThrow({
+        where:{
+          slug: roleSlug
+        }
+      })
+      delete payload.role
+      const user = await this.prismaService.user.create({
+        data:{
+          ...data,
+          password: hash
+
+        }
+      })
+      if (role.slug === RoleEnum.MARCHANT){
+        return await this.createMerchant({
+          userId: user.id,
+          accountStatusId: payload.accountStatusId,
+          institutionId: payload.institutionId
+        })
+      }
+    }
+    catch (e) {
+
+    }
   }
+
 
   findAll() {
     return `This action returns all auth`;
@@ -66,4 +96,13 @@ export class AuthService {
   remove(id: number) {
     return `This action removes a #${id} auth`;
   }
+  private async createMerchant(payload:CreateMarchantDto){
+    try{
+      return await this.marchantService.create(payload)
+    }
+    catch (e) {
+
+    }
+  }
+
 }
