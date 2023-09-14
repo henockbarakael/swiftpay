@@ -1,14 +1,12 @@
+import {IsNotEmpty, IsString} from "class-validator";
+import {ApiProperty} from "@nestjs/swagger";
 
-import { IsNotEmpty, IsString} from 'class-validator';
-import { AccountStatus, Institution } from "@prisma/client"
-import { ApiProperty } from '@nestjs/swagger';
-
-export class CreateMarchantDto {
+export class CreateMerchantDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
     userId: string
-    
+
     @IsString()
     @ApiProperty()
     @IsNotEmpty()
@@ -17,5 +15,4 @@ export class CreateMarchantDto {
     @IsNotEmpty()
     @ApiProperty()
     accountStatusId: string
-
 }

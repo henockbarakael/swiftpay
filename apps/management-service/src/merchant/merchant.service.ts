@@ -1,35 +1,29 @@
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateMarchantDto } from './dto/create-marchant.dto';
-import { UpdateMarchantDto } from './dto/update-marchant.dto';
-import { DatabaseService } from 'shared/database';
-import {
-  CREATE_USER_FAIL_MESSAGE,
-  NOT_FOUND_USER_MESSAGE,
-} from 'libs/constants';
+import {Injectable, NotAcceptableException, NotFoundException} from '@nestjs/common';
+import { CreateMerchantDto } from './dto/create-merchant.dto';
+import { UpdateMerchantDto } from './dto/update-merchant.dto';
+import {DatabaseService} from "shared/database";
+import {CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE} from "../../../../libs/constants";
+import {MerchantEntity} from "./entities/merchant.entity";
 
 @Injectable()
-export class MarchantService {
+export class MerchantService {
   constructor(private readonly prismaService: DatabaseService) {}
-  async create(createMarchantDto: CreateMarchantDto) {
+  async create(createMerchantDto: CreateMerchantDto):Promise<MerchantEntity> {
     try {
       const [user, accountStatus, institution] = await Promise.all([
         await this.prismaService.user.findUniqueOrThrow({
           where: {
-            id: createMarchantDto.userId,
+            id: createMerchantDto.userId,
           },
         }),
         await this.prismaService.accountStatus.findUniqueOrThrow({
           where: {
-            id: createMarchantDto.accountStatusId,
+            id: createMerchantDto.accountStatusId,
           },
         }),
         await this.prismaService.institution.findUniqueOrThrow({
           where: {
-            id: createMarchantDto.institutionId,
+            id: createMerchantDto.institutionId,
           },
         }),
       ]);
@@ -45,7 +39,7 @@ export class MarchantService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string):Promise<MerchantEntity> {
     try {
       return await this.prismaService.merchant.findUnique({
         where: {
@@ -62,7 +56,7 @@ export class MarchantService {
       throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
     }
   }
-  async findByUserId(id: string) {
+  async findByUserId(id: string):Promise<MerchantEntity> {
     try {
       return await this.prismaService.merchant.findMany({
         where: {
@@ -83,18 +77,18 @@ export class MarchantService {
       throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
     }
   }
-  async update(id: string, updateMarchantDto: UpdateMarchantDto) {
+  async update(id: string, updateMerchantDto: UpdateMerchantDto):Promise<MerchantEntity> {
     try {
       return await this.prismaService.merchant.update({
         where: { id },
-        data: { ...updateMarchantDto },
+        data: { ...updateMerchantDto },
       });
     } catch (error) {
       throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE);
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string):Promise<MerchantEntity> {
     try {
       return await this.prismaService.merchant.update({
         where: { id },
