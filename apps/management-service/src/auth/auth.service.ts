@@ -1,5 +1,6 @@
 import {
   Injectable,
+  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -20,6 +21,7 @@ import { MerchantService } from '../merchant/merchant.service';
 import { CreateMerchantDto } from '../merchant/dto/create-merchant.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
+import { Role, User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +29,7 @@ export class AuthService {
     private readonly prismaService: DatabaseService,
     private readonly merchantService: MerchantService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
   async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
@@ -67,30 +69,57 @@ export class AuthService {
   }
   async register(payload: CreateAuthDto) {
     try {
-      const hash = await argon.hash(payload.password);
+      const hash = await this.hashPassword(payload.password);
       const data = { ...payload };
       const roleSlug = data.role;
-      const role = await this.prismaService.role.findUniqueOrThrow({
-        where: {
-          slug: roleSlug,
-        },
-      });
-      delete payload.role;
-      const user = await this.prismaService.user.create({
-        data: {
-          id: generateUuid(),
-          ...data,
-          password: hash,
-        },
-      });
-      if (role.slug === RoleEnum.MERCHANT) {
+
+      const [role, user] = await Promise.all([
+        this.findUserRole(roleSlug),
+        this.createUser(data, hash),
+      ]);
+
+      if ((await this.isUserEmpty(user)) && !role) {
+        throw new NotAcceptableException();
+      } else if (role.slug === RoleEnum.MERCHANT) {
         return await this.createMerchant({
           userId: user.id,
           accountStatusId: payload.accountStatusId,
           institutionId: payload.institutionId,
         });
       }
-    } catch (e) {}
+    } catch (e) {
+      // Gérer l'exception ici
+    }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return await argon.hash(password);
+  }
+  private async createUser(
+    payload: CreateAuthDto,
+    hash: string,
+  ): Promise<User> {
+    delete payload.institutionId;
+    delete payload.accountStatusId;
+    delete payload.password;
+    return await this.prismaService.user.create({
+      data: {
+        ...payload,
+        password: hash,
+      },
+    });
+  }
+
+  private async findUserRole(roleSlug: string): Promise<Role> {
+    return await this.prismaService.role.findUniqueOrThrow({
+      where: {
+        slug: roleSlug,
+      },
+    });
+  }
+
+  private async isUserEmpty(user: any): Promise<boolean> {
+    return Object.keys(await user()).length === 0;
   }
   generateJWT(user: Partial<IUserResponse>) {
     const today = new Date();
@@ -120,7 +149,7 @@ export class AuthService {
         access_token: this.generateJWT(payload),
       } as unknown as IUserResponse;
       return response;
-    } catch (error) {}
+    } catch (error) { }
   }
   findAll() {
     return `This action returns all auth`;
@@ -140,6 +169,6 @@ export class AuthService {
   private async createMerchant(payload: CreateMerchantDto) {
     try {
       return await this.merchantService.create(payload);
-    } catch (e) {}
+    } catch (e) { }
   }
 }
