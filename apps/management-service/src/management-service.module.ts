@@ -7,6 +7,7 @@ import { UserSupportModule } from './user-support/user-support.module';
 import { InstitutionModule } from './institution/institution.module';
 import { ServiceModule } from './service/service.module';
 import { MerchantModule } from './merchant/merchant.module';
+import { AccountStatusModule } from './account-status/account-status.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MerchantModule } from './merchant/merchant.module';
     InstitutionModule,
     ServiceModule,
     MerchantModule,
+    AccountStatusModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],

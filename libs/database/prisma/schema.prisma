@@ -375,3 +375,8 @@ enum TelcoServiceEnum {
   ORANGE
   VODACOM
 }
+enum AccountStatusEnum {
+  PENDING
+  APPROVED
+  MEMBER
+}

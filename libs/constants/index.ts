@@ -29,3 +29,4 @@ export const UPLOAD_IMAGE_SUCCESSFULLY_MESSAGE = 'Image upload successful';
 export const FAILED_LOGIN_ATTEMPTS_MESSAGE = 'Failed login attempts ';
 
 export const USER_ACCOUNT_ENABLED_MESSAGE = 'User account enabled ';
+export const NOT_FOUND_MESSAGE = "can't found data";
