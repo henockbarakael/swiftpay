@@ -41,13 +41,28 @@ export class UserRegisterDto {
   lastName: string;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   @ApiProperty({
     type: String,
     description: 'This is a required property',
   })
-  middleName: string;
+  city: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    description: 'This is a required property',
+  })
+  state: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    description: 'This is a required property',
+  })
+  country: string;
 
   @IsDateString({}, { each: true })
   @IsOptional()
