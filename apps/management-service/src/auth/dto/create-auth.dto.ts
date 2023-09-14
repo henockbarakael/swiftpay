@@ -46,4 +46,11 @@ export class CreateAuthDto {
     @IsOptional()
     role: string;
 
+    @IsString()
+    @IsOptional()
+    accountStatusId: string
+
+    @IsString()
+    @IsOptional()
+    institutionId: string
 }

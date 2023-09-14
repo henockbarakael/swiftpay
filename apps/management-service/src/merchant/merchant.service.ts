@@ -3,14 +3,14 @@ import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
 import {DatabaseService} from "shared/database";
 import {CREATE_USER_FAIL_MESSAGE, NOT_FOUND_USER_MESSAGE} from "../../../../libs/constants";
-import {MerchantEntity} from "./entities/merchant.entity";
 import {PaginationDto} from "shared/dto";
 import {generateUuid} from "../../../../libs/utils";
+import {Merchant} from "@prisma/client";
 
 @Injectable()
 export class MerchantService {
   constructor(private readonly prismaService: DatabaseService) {}
-  async create(createMerchantDto: CreateMerchantDto):Promise<MerchantEntity> {
+  async create(createMerchantDto: CreateMerchantDto):Promise<Merchant> {
     try {
       const [user, accountStatus, institution] = await Promise.all([
         await this.prismaService.user.findUniqueOrThrow({
@@ -42,7 +42,7 @@ export class MerchantService {
     }
   }
 
-  async findOne(id: string):Promise<MerchantEntity> {
+  async findOne(id: string):Promise<Merchant> {
     try {
       return await this.prismaService.merchant.findUnique({
         where: {
@@ -59,7 +59,7 @@ export class MerchantService {
       throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
     }
   }
-  async findByUserId(id: string):Promise<MerchantEntity> {
+  async findByUserId(id: string):Promise<Merchant> {
     try {
       return await this.prismaService.merchant.findMany({
         where: {
@@ -80,7 +80,7 @@ export class MerchantService {
       throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
     }
   }
-  async update(id: string, updateMerchantDto: UpdateMerchantDto):Promise<MerchantEntity> {
+  async update(id: string, updateMerchantDto: UpdateMerchantDto):Promise<Merchant> {
     try {
       return await this.prismaService.merchant.update({
         where: { id },
@@ -91,7 +91,7 @@ export class MerchantService {
     }
   }
 
-  async remove(id: string):Promise<MerchantEntity> {
+  async remove(id: string):Promise<Merchant> {
     try {
       return await this.prismaService.merchant.update({
         where: { id },
@@ -100,7 +100,7 @@ export class MerchantService {
     } catch (error) {}
   }
 
-  async findAll(paginationDto: PaginationDto):Promise<MerchantEntity> {
+  async findAll(paginationDto: PaginationDto):Promise<Merchant> {
     try {
       return await this.prismaService.merchant.findMany({
         include: {

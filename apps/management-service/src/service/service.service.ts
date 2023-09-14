@@ -3,13 +3,13 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import {DatabaseService} from "shared/database";
 import {CREATE_TELCO_SERVICE_FAIL_MESSAGE, CREATE_USER_FAIL_MESSAGE} from "../../../../libs/constants";
-import {ServiceEntity} from "./entities/service.entity";
 import {generateUuid} from "../../../../libs/utils";
+import {Service} from "@prisma/client";
 
 @Injectable()
 export class ServiceService {
   constructor(private readonly prismaService: DatabaseService) {}
-  async  create(createServiceDto: CreateServiceDto):Promise<ServiceEntity> {
+  async  create(createServiceDto: CreateServiceDto):Promise<Service> {
     try {
       return await this.prismaService.service.create({
         data:{
@@ -35,27 +35,31 @@ export class ServiceService {
     return `This action returns a #${id} service`;
   }
 
-  async  update(id: string, updateServiceDto: UpdateServiceDto):Promise<ServiceEntity> {
-    try {
-      return await this.prismaService.service.update({
-        where{
-          id: id,
-        },
-        data:{
-          ...updateServiceDto
-        }
-      }));
-    } catch (error) {
-      throw new NotAcceptableException(CREATE_TELCO_SERVICE_FAIL_MESSAGE);
-    }
-  }
+  // async  update(id: string, updateServiceDto: UpdateServiceDto):Promise<ServiceEntity> {
+  //   try {
+  //     return await this.prismaService.service.update({
+  //       where{
+  //         id: id,
+  //       },
+  //       data:{
+  //         ...updateServiceDto
+  //       }
+  //     }));
+  //   } catch (error) {
+  //     throw new NotAcceptableException(CREATE_TELCO_SERVICE_FAIL_MESSAGE);
+  //   }
+  // }
 
-  async remove(id: string):Promise<ServiceEntity> {
+  async remove(id: string):Promise<Service> {
     try {
       return await this.prismaService.service.update({
         where: { id },
         data: { deletedAt: new Date(Date.now()) },
       });
     } catch (error) {}
+  }
+
+  update(id: string, updateServiceDto: UpdateServiceDto) {
+    
   }
 }

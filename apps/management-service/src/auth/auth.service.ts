@@ -24,7 +24,11 @@ export class AuthService {
           email
         },
         include:{
-          userRoles: true
+          userRoles: {
+              include:{
+                  role: true
+              }
+          }
         }
       });
       if (!userRepo) {
@@ -36,9 +40,9 @@ export class AuthService {
         );
         const userRO = userRepo as unknown as IUserResponse
         if (pwdMatches) {
-          if (userRepo.userRoles.find(role=>role.slug=== RoleEnum.MERCHANT)) {
-            const merchant = await this.merchantService.findByUserId(userRepo.id)
-            return  this.authUtilsService.getUserAuth(merchant);
+          if (userRepo?.userRoles[0]?.role?.slug=== RoleEnum.MERCHANT) {
+            const merchant = await this.merchantService.findByUserId(userRepo[0]?.id)
+            return  this.authUtilsService.getUserAuth(merchant as unknown as IUserResponse ) ;
           }
           return this.authUtilsService.getUserAuth(userRO)
         } else {
@@ -87,15 +91,15 @@ export class AuthService {
     return `This action returns all auth`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} auth`;
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
+  update(id: string, updateAuthDto: UpdateAuthDto) {
     return `This action updates a #${id} auth`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} auth`;
   }
   private async createMerchant(payload:CreateMerchantDto){
