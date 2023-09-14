@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CurrencyEnum } from '@prisma/client';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateAccountStatusDto {
+export class CreateCurrencyDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  name: CurrencyEnum;
+  currency: CurrencyEnum;
 }
