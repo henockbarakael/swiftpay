@@ -68,3 +68,7 @@ export const checkValidOperator = (
   }
   return false;
 };
+
+export const generateUuid = ()=>{
+  return  v4()
+}

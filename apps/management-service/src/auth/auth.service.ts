@@ -1,4 +1,4 @@
-import {AuthUtilsService} from '../../../../libs/auth-utils/src/auth-utils.service';
+import {AuthUtilsService} from 'shared/auth-utils';
 import {Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import {CreateAuthDto} from './dto/create-auth.dto';
 import {UpdateAuthDto} from './dto/update-auth.dto';
@@ -8,12 +8,13 @@ import {FORBIDDEN_TO_LOGIN_MESSAGE, NOT_FOUND_USER_MESSAGE, PASSWORD_FAIL_MESSAG
 import {IUserResponse} from 'shared/types';
 import {RoleEnum} from 'libs/enums';
 import {DatabaseService} from 'shared/database';
-import {MarchantService} from '../marchant/marchant.service';
-import {CreateMarchantDto} from "../marchant/dto/create-marchant.dto";
+import {generateUuid} from "../../../../libs/utils";
+import {MerchantService} from "../merchant/merchant.service";
+import {CreateMerchantDto} from "../merchant/dto/create-merchant.dto";
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService:DatabaseService, private readonly authUtilsService:AuthUtilsService, private readonly marchantService: MarchantService){}
+  constructor(private readonly prismaService:DatabaseService, private readonly authUtilsService:AuthUtilsService, private readonly merchantService: MerchantService){}
   async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
@@ -35,9 +36,9 @@ export class AuthService {
         );
         const userRO = userRepo as unknown as IUserResponse
         if (pwdMatches) {
-          if (userRepo.userRoles.find(role=>role.slug=== RoleEnum.MARCHANT)) {
-            const marchant = await this.marchantService.findByUserId(userRepo.id)
-            return  this.authUtilsService.getUserAuth(marchant);
+          if (userRepo.userRoles.find(role=>role.slug=== RoleEnum.MERCHANT)) {
+            const merchant = await this.merchantService.findByUserId(userRepo.id)
+            return  this.authUtilsService.getUserAuth(merchant);
           }
           return this.authUtilsService.getUserAuth(userRO)
         } else {
@@ -62,12 +63,13 @@ export class AuthService {
       delete payload.role
       const user = await this.prismaService.user.create({
         data:{
+          id: generateUuid(),
           ...data,
           password: hash
 
         }
       })
-      if (role.slug === RoleEnum.MARCHANT){
+      if (role.slug === RoleEnum.MERCHANT){
         return await this.createMerchant({
           userId: user.id,
           accountStatusId: payload.accountStatusId,
@@ -96,9 +98,9 @@ export class AuthService {
   remove(id: number) {
     return `This action removes a #${id} auth`;
   }
-  private async createMerchant(payload:CreateMarchantDto){
+  private async createMerchant(payload:CreateMerchantDto){
     try{
-      return await this.marchantService.create(payload)
+      return await this.merchantService.create(payload)
     }
     catch (e) {
 
