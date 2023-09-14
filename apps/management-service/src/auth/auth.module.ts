@@ -4,9 +4,13 @@ import { AuthController } from './auth.controller';
 import { jwtConstants } from './constants';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import {MerchantModule} from "../merchant/merchant.module";
+import {AuthUtilsModule} from "shared/auth-utils";
 
 @Module({
   imports:[
+      MerchantModule,
+      AuthUtilsModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
