@@ -42,12 +42,6 @@
       "shared/constants/*": [
         "libs/constants/src/*"
       ],
-      "shared/auth-utils": [
-        "libs/auth-utils/src"
-      ],
-      "shared/auth-utils/*": [
-        "libs/auth-utils/src/*"
-      ],
       "shared/dto": [
         "libs/dto/src",
         "libs/dto/src"

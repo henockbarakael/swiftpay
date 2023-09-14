@@ -105,15 +105,6 @@
         "tsConfigPath": "libs/constants/tsconfig.lib.json"
       }
     },
-    "auth-utils": {
-      "type": "library",
-      "root": "libs/auth-utils",
-      "entryFile": "index",
-      "sourceRoot": "libs/auth-utils/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/auth-utils/tsconfig.lib.json"
-      }
-    },
     "encryption": {
       "type": "library",
       "root": "libs/encryption",

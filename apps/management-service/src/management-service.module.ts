@@ -10,12 +10,12 @@ import { MerchantModule } from './merchant/merchant.module';
 
 @Module({
   imports: [
-  //   AuthModule,
     DatabaseModule,
-  UserSupportModule,
-  InstitutionModule,
-  ServiceModule,
-  MerchantModule,
+    AuthModule,
+    UserSupportModule,
+    InstitutionModule,
+    ServiceModule,
+    MerchantModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],

@@ -1,34 +1,31 @@
-import {Injectable, NotAcceptableException} from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import {DatabaseService} from "shared/database";
-import {CREATE_TELCO_SERVICE_FAIL_MESSAGE, CREATE_USER_FAIL_MESSAGE} from "../../../../libs/constants";
-import {generateUuid} from "../../../../libs/utils";
-import {Service} from "@prisma/client";
+import { DatabaseService } from 'shared/database';
+import { CREATE_TELCO_SERVICE_FAIL_MESSAGE } from '../../../../libs/constants';
+import { generateUuid } from '../../../../libs/utils';
+import { Service } from '@prisma/client';
 
 @Injectable()
 export class ServiceService {
   constructor(private readonly prismaService: DatabaseService) {}
-  async  create(createServiceDto: CreateServiceDto):Promise<Service> {
+  async create(createServiceDto: CreateServiceDto): Promise<Service> {
     try {
       return await this.prismaService.service.create({
-        data:{
+        data: {
           id: generateUuid(),
-          ...createServiceDto
-        }
-      })
-    }catch (e) {
+          ...createServiceDto,
+        },
+      });
+    } catch (e) {
       throw new NotAcceptableException(CREATE_TELCO_SERVICE_FAIL_MESSAGE);
     }
   }
 
   async findAll() {
     try {
-      await this.prismaService.service.findMany()
-    }
-    catch (e) {
-
-    }
+      await this.prismaService.service.findMany();
+    } catch (e) {}
   }
 
   findOne(id: number) {
@@ -50,7 +47,7 @@ export class ServiceService {
   //   }
   // }
 
-  async remove(id: string):Promise<Service> {
+  async remove(id: string): Promise<Service> {
     try {
       return await this.prismaService.service.update({
         where: { id },
@@ -60,6 +57,6 @@ export class ServiceService {
   }
 
   update(id: string, updateServiceDto: UpdateServiceDto) {
-    
+    /* TODO document why this method 'update' is empty */
   }
 }

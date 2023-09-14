@@ -10,7 +10,7 @@ import {
   CREATE_USER_FAIL_MESSAGE,
   NOT_FOUND_USER_MESSAGE,
 } from 'libs/constants';
-import {generateUuid} from "../../../../libs/utils";
+import { generateUuid } from '../../../../libs/utils';
 
 @Injectable()
 export class UserSupportService {
