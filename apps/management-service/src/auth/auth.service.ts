@@ -187,4 +187,44 @@ export class AuthService {
       return await this.merchantService.create(payload);
     } catch (e) {}
   }
+  async findAll(): Promise<User[]> {
+    try {
+      return await this.prismaService.user.findMany({
+        include: {
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      });
+    } catch (e) {}
+  }
+  async findOne(id: string): Promise<User> {
+    try {
+      return await this.prismaService.user.findUnique({
+        where: { id },
+        include: {
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      });
+    } catch (e) {}
+  }
+  async remove(id: string): Promise<User> {
+    try {
+      return await this.prismaService.user.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+    } catch (e) {}
+  }
+  update(id: string, updateAuthDto: UpdateAuthDto) {
+    throw new Error('Method not implemented.');
+  }
 }
