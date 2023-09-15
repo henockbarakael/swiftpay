@@ -43,6 +43,12 @@ export class MerchantService {
           accountStatusId: accountStatus.id,
           institutionId: institution.id,
         },
+        include: {
+          accountStatus: true,
+          MerchantAccountParameter: true,
+          user: true,
+          institution: true,
+        },
       });
     } catch (error) {
       throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE);

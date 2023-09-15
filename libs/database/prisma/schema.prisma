@@ -53,8 +53,6 @@ model Role {
 
 model UserRole {
   id        String    @id @default(uuid())
-  name      String
-  slug      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?

@@ -98,6 +98,10 @@ export class UserRegisterDto {
 
   @IsString()
   @IsOptional()
+  @ApiProperty({
+    type: String,
+    description: 'This is a required property',
+  })
   role: string;
 
   @IsString()

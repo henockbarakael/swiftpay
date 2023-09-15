@@ -21,7 +21,7 @@ import { MerchantService } from '../merchant/merchant.service';
 import { CreateMerchantDto } from '../merchant/dto/create-merchant.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { Role, User } from '@prisma/client';
+import { Role, User, UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,7 @@ export class AuthService {
     private readonly prismaService: DatabaseService,
     private readonly merchantService: MerchantService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
   async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
@@ -77,15 +77,20 @@ export class AuthService {
         this.findUserRole(roleSlug),
         this.createUser(data, hash),
       ]);
-
-      if ((await this.isUserEmpty(user)) && !role) {
+      console.log('2:', role);
+      if (this.isUserEmpty(user) && !role) {
         throw new NotAcceptableException();
       } else if (role.slug === RoleEnum.MERCHANT) {
-        return await this.createMerchant({
-          userId: user.id,
-          accountStatusId: payload.accountStatusId,
-          institutionId: payload.institutionId,
-        });
+        console.log('1:', user);
+        const [merchant, userRole] = await Promise.all([
+          this.createMerchant({
+            userId: user.id,
+            accountStatusId: payload.accountStatusId,
+            institutionId: payload.institutionId,
+          }),
+          this.createUserRole(user, role),
+        ]);
+        return merchant;
       }
     } catch (e) {
       // Gérer l'exception ici
@@ -99,15 +104,29 @@ export class AuthService {
     payload: CreateAuthDto,
     hash: string,
   ): Promise<User> {
-    delete payload.institutionId;
-    delete payload.accountStatusId;
-    delete payload.password;
-    return await this.prismaService.user.create({
-      data: {
-        ...payload,
-        password: hash,
-      },
-    });
+    const userDto: any = {
+      email: payload.email,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      city: payload?.city,
+      state: payload?.state,
+      country: payload?.country,
+      birthDate: new Date(payload.birthDate),
+      gender: payload.gender,
+      address: payload.address,
+      isActive: true,
+      phone: payload.phone,
+      password: hash,
+    } as unknown as Partial<User>;
+    try {
+      return await this.prismaService.user.create({
+        data: {
+          ...userDto,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   private async findUserRole(roleSlug: string): Promise<Role> {
@@ -119,7 +138,19 @@ export class AuthService {
   }
 
   private async isUserEmpty(user: any): Promise<boolean> {
-    return Object.keys(await user()).length === 0;
+    return Object.keys(user).length === 0;
+  }
+  private async createUserRole(user: User, role: Role): Promise<UserRole> {
+    try {
+      return await this.prismaService.userRole.create({
+        data: {
+          userId: user.id,
+          roleId: role.id,
+        },
+      });
+    } catch (error) {
+      throw new Error('Method not implemented.');
+    }
   }
   generateJWT(user: Partial<IUserResponse>) {
     const today = new Date();
@@ -149,26 +180,11 @@ export class AuthService {
         access_token: this.generateJWT(payload),
       } as unknown as IUserResponse;
       return response;
-    } catch (error) { }
-  }
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: string) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: string, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: string) {
-    return `This action removes a #${id} auth`;
+    } catch (error) {}
   }
   private async createMerchant(payload: CreateMerchantDto) {
     try {
       return await this.merchantService.create(payload);
-    } catch (e) { }
+    } catch (e) {}
   }
 }
