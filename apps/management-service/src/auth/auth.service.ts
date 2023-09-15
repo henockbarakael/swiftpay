@@ -77,7 +77,7 @@ export class AuthService {
         this.findUserRole(roleSlug),
         this.createUser(data, hash),
       ]);
-      console.log('2:', role);
+
       if (this.isUserEmpty(user) && !role) {
         throw new NotAcceptableException();
       } else if (role.slug === RoleEnum.MERCHANT) {
@@ -190,6 +190,7 @@ export class AuthService {
   async findAll(): Promise<User[]> {
     try {
       return await this.prismaService.user.findMany({
+        where: { deletedAt: null },
         include: {
           userRoles: {
             include: {
@@ -224,7 +225,14 @@ export class AuthService {
       });
     } catch (e) {}
   }
-  update(id: string, updateAuthDto: UpdateAuthDto) {
-    throw new Error('Method not implemented.');
+  async update(id: string, updateAuthDto: UpdateAuthDto) {
+    try {
+      return await this.prismaService.user.update({
+        where: { id },
+        data: {
+          ...updateAuthDto,
+        },
+      });
+    } catch (e) {}
   }
 }
