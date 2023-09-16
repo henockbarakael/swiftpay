@@ -1,4 +1,4 @@
-import { CurrencyEnum, PrismaClient, User } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import * as argon from 'argon2';
 import { RoleEnum } from '../../../enums/role.enum';
 
@@ -110,7 +110,7 @@ async function main() {
   await prisma.currency.deleteMany();
 
   await prisma.currency.createMany({
-    data: [{ currency: CurrencyEnum.CDF }, { currency: CurrencyEnum.USD }],
+    data: [{ currency: 'CDF' }, { currency: 'USD' }],
   });
 }
 main()
