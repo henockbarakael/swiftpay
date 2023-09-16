@@ -198,7 +198,7 @@ model TransactionStatus {
 
 model Currency {
   id             String           @id @default(uuid())
-  currency       CurrencyEnum     @default(USD)
+  currency       String
   Transaction    Transaction[]
   DailyOperation DailyOperation[]
   MerchantWallet MerchantWallet[]
@@ -207,13 +207,13 @@ model Currency {
 }
 
 model Institution {
-  id          String           @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   email       String
   phone       String
-  description String?          @db.Text
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
   Marchant Merchant[]
@@ -237,7 +237,7 @@ model MerchantCommission {
 
 model Service {
   id                 String               @id @default(uuid())
-  name               TelcoServiceEnum
+  name               String
   serviceTopic       String
   deletedAt          DateTime?
   MerchantCommission MerchantCommission[]
