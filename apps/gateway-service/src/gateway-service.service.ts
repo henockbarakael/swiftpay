@@ -29,118 +29,119 @@ export class GatewayService {
   ) {
     const key = checkMarchantVerificationDto.key;
 
-    try {
-      const existMarchant = await this.dbService.merchant.findUniqueOrThrow({
-        where: {
-          id: checkMarchantVerificationDto.merchantID,
-        },
-        include: {
-          user: true,
-        },
-      });
+    // try {
+    const existMarchant = await this.dbService.merchant.findUniqueOrThrow({
+      where: {
+        id: checkMarchantVerificationDto.merchantID,
+      },
+      include: {
+        user: true,
+      },
+    });
 
-      const { existService, existCurrency } =
-        await this.checkServiceAndCurrency(checkMarchantVerificationDto);
+    const { existService, existCurrency } = await this.checkServiceAndCurrency(
+      checkMarchantVerificationDto,
+    );
 
-      if (Object.keys(existMarchant).length !== 0) {
-        if (existService.length !== 0 && existCurrency.length !== 0) {
+    if (Object.keys(existMarchant).length !== 0) {
+      if (existService.length !== 0 && existCurrency.length !== 0) {
+        if (
+          checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT ||
+          checkMarchantVerificationDto.action === ActionOperationEnum.CREDIT
+        ) {
+          const isIntegrity = await this.integrityCheck(
+            checkMarchantVerificationDto,
+            key,
+          );
+          // check if the customer number match operator schemas
           if (
-            checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT ||
-            checkMarchantVerificationDto.action === ActionOperationEnum.CREDIT
-          ) {
-            const isIntegrity = await this.integrityCheck(
-              checkMarchantVerificationDto,
-              key,
-            );
-            // check if the customer number match operator schemas
-            if (
-              !checkValidOperator(
-                checkMarchantVerificationDto.phoneNumber,
-                existService[0].name,
-              )
-            ) {
-              return false;
-            }
-
-            // store transaction in the database
-            await this.dbService.dailyOperation.create({
-              data: {
-                amount: checkMarchantVerificationDto.amount,
-                merchantReference: checkMarchantVerificationDto.reference,
-                telcoReference: '',
-                telcoStatus: '',
-                telcoStatusDescription: '',
-                currencyId: existCurrency[0].id,
-                serviceId: existService[0].id,
-                transactionStatusId: 'PENDING',
-                reference: referenceGenerator(),
-                customerNumber: checkMarchantVerificationDto.phoneNumber,
-              },
-            });
-
-            // verifify integrity
-            if (!isIntegrity) {
-              return false;
-            }
-
-            // blacklist check
-            const isBlacklisted = await this.blacklistCheck(
+            !checkValidOperator(
               checkMarchantVerificationDto.phoneNumber,
-            );
-
-            // service authorization check
-            const isServiceRestricted = await this.serviceAuthorizationCheck(
-              checkMarchantVerificationDto.service,
-              checkMarchantVerificationDto.merchantID,
-            );
-
-            // action autorization
-            const isActionRestricted = await this.actionAuthorizationCheck(
-              checkMarchantVerificationDto.action,
-              checkMarchantVerificationDto.merchantID,
-            );
-
-            // transaction limit check
-            const isTransactionLimited = await this.transactionLimitCheck(
-              checkMarchantVerificationDto.merchantID,
-              checkMarchantVerificationDto.amount,
-              checkMarchantVerificationDto.currency,
-            );
-
-            if (
-              isBlacklisted ||
-              isServiceRestricted ||
-              isActionRestricted ||
-              isTransactionLimited
-            ) {
-              return false;
-            }
-
-            // write to kafka
-            const topic = existService[0].name.toLowerCase();
-            this.gatewayClient.emit(topic, {
-              merchantID: checkMarchantVerificationDto.merchantID,
-              phoneNumber: checkMarchantVerificationDto.phoneNumber,
-              amount: checkMarchantVerificationDto.amount,
-              currency: checkMarchantVerificationDto.currency,
-              service: checkMarchantVerificationDto.service,
-              reference: checkMarchantVerificationDto.reference,
-              action: checkMarchantVerificationDto.action,
-            });
-
-            return true;
-          } else {
+              existService[0].name,
+            )
+          ) {
             return false;
           }
+
+          // store transaction in the database
+          await this.dbService.dailyOperation.create({
+            data: {
+              amount: checkMarchantVerificationDto.amount,
+              merchantReference: checkMarchantVerificationDto.reference,
+              telcoReference: '',
+              telcoStatus: '',
+              telcoStatusDescription: '',
+              currencyId: existCurrency[0].id,
+              serviceId: existService[0].id,
+              transactionStatusId: 'PENDING',
+              reference: referenceGenerator(),
+              customerNumber: checkMarchantVerificationDto.phoneNumber,
+            },
+          });
+
+          // verifify integrity
+          if (!isIntegrity) {
+            return false;
+          }
+
+          // blacklist check
+          const isBlacklisted = await this.blacklistCheck(
+            checkMarchantVerificationDto.phoneNumber,
+          );
+
+          // service authorization check
+          const isServiceRestricted = await this.serviceAuthorizationCheck(
+            checkMarchantVerificationDto.service,
+            checkMarchantVerificationDto.merchantID,
+          );
+
+          // action autorization
+          const isActionRestricted = await this.actionAuthorizationCheck(
+            checkMarchantVerificationDto.action,
+            checkMarchantVerificationDto.merchantID,
+          );
+
+          // transaction limit check
+          const isTransactionLimited = await this.transactionLimitCheck(
+            checkMarchantVerificationDto.merchantID,
+            checkMarchantVerificationDto.amount,
+            checkMarchantVerificationDto.currency,
+          );
+
+          if (
+            isBlacklisted ||
+            isServiceRestricted ||
+            isActionRestricted ||
+            isTransactionLimited
+          ) {
+            return false;
+          }
+
+          // write to kafka
+          const topic = existService[0].name.toLowerCase();
+          this.gatewayClient.emit(topic, {
+            merchantID: checkMarchantVerificationDto.merchantID,
+            phoneNumber: checkMarchantVerificationDto.phoneNumber,
+            amount: checkMarchantVerificationDto.amount,
+            currency: checkMarchantVerificationDto.currency,
+            service: checkMarchantVerificationDto.service,
+            reference: checkMarchantVerificationDto.reference,
+            action: checkMarchantVerificationDto.action,
+          });
+
+          return true;
         } else {
           return false;
         }
       } else {
         return false;
       }
-    } catch (error) {
-      throw new NotAcceptableException(error);
+    } else {
+      return false;
     }
+    // } catch (error) {
+    //   throw new NotAcceptableException(error);
+    // }
   }
 
   async checkServiceAndCurrency(
