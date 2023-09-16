@@ -94,18 +94,18 @@ async function main() {
     },
   });
 
-  const role = await prisma.role.findFirst();
+  // const role = await prisma.role.findFirst();
 
-  await prisma.userRole.upsert({
-    where: {
-      id: role.id,
-    },
-    update: {},
-    create: {
-      userId: superAdmin.id,
-      roleId: superAdminRole.id,
-    },
-  });
+  // await prisma.userRole.upsert({
+  //   where: {
+  //     id: role.id,
+  //   },
+  //   update: {},
+  //   create: {
+  //     userId: superAdmin.id,
+  //     roleId: superAdminRole.id,
+  //   },
+  // });
 
   await prisma.currency.deleteMany();
 
