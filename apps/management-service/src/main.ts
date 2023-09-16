@@ -29,6 +29,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   console.log('Management Micro-service');
-  await app.listen(3500);
+  await app.listen(3800);
 }
 bootstrap();

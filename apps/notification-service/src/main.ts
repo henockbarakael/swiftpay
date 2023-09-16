@@ -20,6 +20,6 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservices();
-  await app.listen(configService.get('NOTIFICATION_MICROSERVICE_PORT'));
+  await app.listen(3001);
 }
 bootstrap();
