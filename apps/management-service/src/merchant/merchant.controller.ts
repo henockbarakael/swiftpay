@@ -13,20 +13,15 @@ import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
 import { PaginationDto } from 'shared/dto';
 import { ApiTags } from '@nestjs/swagger';
-import { UserRegisterDto } from 'shared/dto/user-register.dto';
-import { AuthService } from '../auth/auth.service';
 
 @Controller('merchant')
 @ApiTags('merchant')
 export class MerchantController {
-  constructor(
-    private readonly merchantService: MerchantService,
-    private authService: AuthService,
-  ) {}
+  constructor(private readonly merchantService: MerchantService) {}
 
   @Post()
-  create(@Body() createMerchantDto: UserRegisterDto) {
-    return this.authService.register(createMerchantDto);
+  create(@Body() createMerchantDto: CreateMerchantDto) {
+    return this.merchantService.create(createMerchantDto);
   }
 
   @Get('find-all-by-paginate')

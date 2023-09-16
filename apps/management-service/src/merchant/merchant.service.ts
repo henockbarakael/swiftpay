@@ -36,9 +36,10 @@ export class MerchantService {
           },
         }),
       ]);
-      return await this.prismaService.merchant.create({
+
+      // create du merchant
+      const merchant = await this.prismaService.merchant.create({
         data: {
-          id: generateUuid(),
           userId: user.id,
           accountStatusId: accountStatus.id,
           institutionId: institution.id,
@@ -50,6 +51,29 @@ export class MerchantService {
           institution: true,
         },
       });
+
+      // creation des wallets pour le merchant
+      const services = await this.prismaService.service.findMany();
+      const currencies = await this.prismaService.currency.findMany();
+
+      for (let index = 0; index < services.length; index++) {
+        for (let index2 = 0; index2 < currencies.length; index2++) {
+          const currency = currencies[index2];
+
+          await this.prismaService.merchantWallet.createMany({
+            data: [
+              {
+                serviceId: services[index].id,
+                merchantId: merchant.id,
+                balance: 0,
+                currencyId: currency.id,
+              },
+            ],
+          });
+        }
+      }
+
+      return merchant;
     } catch (error) {
       throw new NotAcceptableException(CREATE_USER_FAIL_MESSAGE);
     }
