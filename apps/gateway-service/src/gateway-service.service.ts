@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  NotAcceptableException,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CheckMarchantVerificationDto } from './dto/create-verification.dto';
 import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';

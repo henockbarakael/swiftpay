@@ -1,8 +1,4 @@
-import {
-  ActionOperationEnum,
-  CurrencyEnum,
-  TelcoServiceEnum,
-} from '@prisma/client';
+import { ActionOperationEnum } from '@prisma/client';
 import { IsNotEmpty, IsPhoneNumber } from 'class-validator';
 export class CreateVerificationDto {
   @IsNotEmpty()
@@ -46,7 +42,7 @@ export class CheckMarchantVerificationDto {
   amount: number;
 
   @IsNotEmpty()
-  currency: CurrencyEnum;
+  currency: string;
 
   @IsNotEmpty()
   service: TelcoServiceEnum;
