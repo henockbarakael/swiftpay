@@ -45,7 +45,7 @@ export class CheckMarchantVerificationDto {
   currency: string;
 
   @IsNotEmpty()
-  service: TelcoServiceEnum;
+  service: string;
 
   @IsNotEmpty()
   reference: string;
