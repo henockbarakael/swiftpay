@@ -63,6 +63,10 @@ export class GatewayService {
           }
 
           console.log('before db write');
+
+          const transactionStatus =
+            await this.dbService.transactionStatus.findFirst();
+
           // store transaction in the database
           const ack = await this.dbService.dailyOperation.create({
             data: {
@@ -73,7 +77,7 @@ export class GatewayService {
               telcoStatusDescription: '',
               currencyId: existCurrency[0].id,
               serviceId: existService[0].id,
-              transactionStatusId: 'PENDING',
+              transactionStatusId: transactionStatus.id,
               reference: referenceGenerator(),
               customerNumber: checkMarchantVerificationDto.phoneNumber,
             },
