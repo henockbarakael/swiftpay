@@ -45,13 +45,17 @@ export class GatewayService {
     if (Object.keys(existMarchant).length !== 0) {
       if (existService.length !== 0 && existCurrency.length !== 0) {
         if (
-          checkMarchantVerificationDto.action === ActionOperationEnum.DEBIT ||
-          checkMarchantVerificationDto.action === ActionOperationEnum.CREDIT
+          checkMarchantVerificationDto.action.toUpperCase() ===
+            ActionOperationEnum.DEBIT ||
+          checkMarchantVerificationDto.action.toUpperCase() ===
+            ActionOperationEnum.CREDIT
         ) {
           const isIntegrity = await this.integrityCheck(
             checkMarchantVerificationDto,
             key,
           );
+
+          console.log(isIntegrity);
           // check if the customer number match operator schemas
           if (
             !checkValidOperator(
@@ -62,6 +66,7 @@ export class GatewayService {
             return false;
           }
 
+          console.log('before db write');
           // store transaction in the database
           const ack = await this.dbService.dailyOperation.create({
             data: {

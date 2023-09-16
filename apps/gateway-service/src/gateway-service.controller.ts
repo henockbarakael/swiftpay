@@ -6,10 +6,13 @@ export class GatewayController {
   constructor(private readonly gatewayService: GatewayService) {}
 
   @Post()
-  checkMarchant(
+  async checkMarchant(
     @Body() checkMarchantVerificationDto: CheckMarchantVerificationDto,
   ) {
-    if (this.gatewayService.checkMarchant(checkMarchantVerificationDto)) {
+    const result = await this.gatewayService.checkMarchant(
+      checkMarchantVerificationDto,
+    );
+    if (result === true) {
       return {
         message:
           "your requested has been received successfuly and it's under processing",
