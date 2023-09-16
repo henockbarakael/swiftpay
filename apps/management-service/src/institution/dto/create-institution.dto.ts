@@ -6,7 +6,7 @@ export class CreateInstitutionDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  name: TelcoServiceEnum;
+  name: string;
 
   @IsNotEmpty()
   @IsString()

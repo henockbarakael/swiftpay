@@ -71,7 +71,7 @@ model User {
   firstName         String?
   lastName          String?
   email             String       @unique
-  password    String
+  password          String
   salt              String?
   birthDate         DateTime?
   gender            String       @default("M")
@@ -208,7 +208,7 @@ model Currency {
 
 model Institution {
   id          String           @id @default(uuid())
-  name        TelcoServiceEnum
+  name        String
   email       String
   phone       String
   description String?          @db.Text
@@ -373,6 +373,7 @@ enum TelcoServiceEnum {
   ORANGE
   VODACOM
 }
+
 enum AccountStatusEnum {
   PENDING
   APPROVED
