@@ -94,14 +94,14 @@ async function main() {
     },
   });
 
+  const role = await prisma.role.findFirst();
+
   await prisma.userRole.upsert({
     where: {
-      slug: 'admin_user_role',
+      id: role.id,
     },
     update: {},
     create: {
-      name: 'admin user role',
-      slug: 'admin_user_role',
       userId: superAdmin.id,
       roleId: superAdminRole.id,
     },
