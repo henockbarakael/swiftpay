@@ -128,7 +128,7 @@ model UserSupport {
 
 model Transaction {
   id                     String            @id @default(uuid())
-  idOps                  DailyOperation    @relation(fields: [dailyOperationId], references: [id])
+  idOps                  String            @default(uuid())
   merchantReference      String
   amount                 Float
   currency               Currency          @relation(fields: [currencyId], references: [id])
@@ -172,7 +172,6 @@ model DailyOperation {
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
   deletedAt              DateTime?
-  Transaction            Transaction[]
   currencyId             String
   serviceId              String
   transactionStatusId    String
