@@ -135,7 +135,7 @@ export class GatewayService {
 
           console.log(topic);
 
-          await this.gatewayClient.emit(topic, {
+          this.gatewayClient.emit(topic, {
             merchantID: checkMarchantVerificationDto.merchantID,
             phoneNumber: checkMarchantVerificationDto.phoneNumber,
             amount: checkMarchantVerificationDto.amount,
@@ -278,9 +278,13 @@ export class GatewayService {
       },
     });
 
-    if (parseFloat(params[0].value) > amount) {
+    if (params !== undefined) {
       return false;
+    } else {
+      if (parseFloat(params[0].value) > amount) {
+        return false;
+      }
+      return true;
     }
-    return true;
   }
 }
