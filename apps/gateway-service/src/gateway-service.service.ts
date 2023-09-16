@@ -34,6 +34,8 @@ export class GatewayService {
       },
     });
 
+    console.log(existMarchant);
+
     const { existService, existCurrency } = await this.checkServiceAndCurrency(
       checkMarchantVerificationDto,
     );
