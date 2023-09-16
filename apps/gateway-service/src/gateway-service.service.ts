@@ -40,6 +40,8 @@ export class GatewayService {
       checkMarchantVerificationDto,
     );
 
+    console.log(existService, existCurrency);
+
     if (Object.keys(existMarchant).length !== 0) {
       if (existService.length !== 0 && existCurrency.length !== 0) {
         if (
@@ -61,7 +63,7 @@ export class GatewayService {
           }
 
           // store transaction in the database
-          await this.dbService.dailyOperation.create({
+          const ack = await this.dbService.dailyOperation.create({
             data: {
               amount: checkMarchantVerificationDto.amount,
               merchantReference: checkMarchantVerificationDto.reference,
@@ -76,6 +78,9 @@ export class GatewayService {
             },
           });
 
+          console.log(`db ack ${ack}`);
+
+          console.log(isIntegrity);
           // verifify integrity
           if (!isIntegrity) {
             return false;
@@ -105,6 +110,12 @@ export class GatewayService {
             checkMarchantVerificationDto.currency,
           );
 
+          console.log(
+            isBlacklisted,
+            isServiceRestricted,
+            isActionRestricted,
+            isTransactionLimited,
+          );
           if (
             isBlacklisted ||
             isServiceRestricted ||
@@ -116,7 +127,10 @@ export class GatewayService {
 
           // write to kafka
           const topic = existService[0].name.toLowerCase();
-          this.gatewayClient.emit(topic, {
+
+          console.log(topic);
+
+          await this.gatewayClient.emit(topic, {
             merchantID: checkMarchantVerificationDto.merchantID,
             phoneNumber: checkMarchantVerificationDto.phoneNumber,
             amount: checkMarchantVerificationDto.amount,
