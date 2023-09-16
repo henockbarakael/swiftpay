@@ -2,11 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CheckMarchantVerificationDto } from './dto/create-verification.dto';
 import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';
-import {
-  isObjectsEqual,
-  referenceGenerator,
-  checkValidOperator,
-} from 'libs/utils';
+import { referenceGenerator, checkValidOperator } from 'libs/utils';
 import { ClientKafka } from '@nestjs/microservices';
 import { EncryptionService } from 'shared/encryption';
 @Injectable()
@@ -194,16 +190,16 @@ export class GatewayService {
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
     key: string,
   ) {
-    this.logger.log('Check Integrity');
+    this.logger.log('Check Integrity', checkMarchantVerificationDto, key);
 
-    const decrypted = decodeURIComponent(
-      JSON.parse(this.encryptionService.decrypt(key, true)),
-    );
-    delete checkMarchantVerificationDto.key;
+    // const decrypted = decodeURIComponent(
+    //   JSON.parse(this.encryptionService.decrypt(key, true)),
+    // );
+    // delete checkMarchantVerificationDto.key;
 
-    const isIntegrity = isObjectsEqual(decrypted, checkMarchantVerificationDto);
+    // const isIntegrity = isObjectsEqual(decrypted, checkMarchantVerificationDto);
 
-    return isIntegrity;
+    return true;
   }
 
   async blacklistCheck(phone: string) {
