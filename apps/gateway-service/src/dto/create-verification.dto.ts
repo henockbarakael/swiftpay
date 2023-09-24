@@ -52,4 +52,6 @@ export class CheckMarchantVerificationDto {
 
   @IsNotEmpty()
   action: ActionOperationEnum;
+
+  callback_url: string;
 }

@@ -146,6 +146,7 @@ model Transaction {
   currencyId             String
   transactionStatusId    String
   serviceId              String
+  callbackUrl            String
 
   @@unique([merchantReference])
   @@unique([telcoReference])
@@ -175,6 +176,7 @@ model DailyOperation {
   currencyId             String
   serviceId              String
   transactionStatusId    String
+  callbackUrl            String
 
   @@unique([merchantReference])
   @@unique([telcoReference])
