@@ -25,6 +25,8 @@ export class CreateVerificationDto {
 
   @IsNotEmpty()
   action: ActionOperationEnum;
+
+  callback_url: string;
 }
 
 export class CheckMarchantVerificationDto {
