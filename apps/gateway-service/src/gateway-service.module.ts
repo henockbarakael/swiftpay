@@ -5,6 +5,7 @@ import { DatabaseModule } from 'shared/database';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { EncryptionService } from 'shared/encryption';
 import { ConfigService } from '@nestjs/config';
+import { WalletService } from 'shared/wallet';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { ConfigService } from '@nestjs/config';
     DatabaseModule,
   ],
   controllers: [GatewayController],
-  providers: [GatewayService, EncryptionService, ConfigService],
+  providers: [GatewayService, EncryptionService, ConfigService, WalletService],
 })
 export class GatewayModule {}
