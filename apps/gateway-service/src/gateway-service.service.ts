@@ -73,7 +73,7 @@ export class GatewayService {
             data: {
               amount: checkMarchantVerificationDto.amount,
               merchantReference: checkMarchantVerificationDto.reference,
-              telcoReference: '',
+              telcoReference: `${v4()}`,
               telcoStatus: '',
               telcoStatusDescription: '',
               currencyId: existCurrency[0].id,
