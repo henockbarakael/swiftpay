@@ -14,21 +14,21 @@ export class TelcoServiceService {
     console.log(data);
     // request body
     const body = {
-      merchant_id: process.env.merchant_id,
-      merchant_secret: process.env.merchant_secret,
+      merchant_id: `${process.env.merchant_id}`,
+      merchant_secret: `${process.env.merchant_secret}`,
       amount: data.amount,
-      currency: data.currency,
-      action: data.action,
-      customer_number: data.phone_number,
-      firstname: process.env.firstname,
-      lastname: process.env.lastname,
-      email: process.env.email,
-      reference: data.reference,
+      currency: `${data.currency}`,
+      action: `${data.action.toLowerCase()}`,
+      customer_number: `${data.phone_number.slice(3)}`,
+      firstname: `${process.env.firstname}`,
+      lastname: `${process.env.lastname}`,
+      email: `${process.env.email}`,
+      reference: `${data.reference}`,
       method:
         data.service.toLowerCase() == 'vodacom'
           ? 'mpesa'
-          : process.env.service.toLowerCase(),
-      callback_url: '',
+          : `${process.env.service.toLowerCase()}`,
+      callback_url: data.callback_url,
     };
 
     const response = await axios.post(`${process.env.endpoint}`, body);

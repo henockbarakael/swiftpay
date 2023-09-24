@@ -84,6 +84,7 @@ export class GatewayService {
               transactionStatusId: transactionStatus.id,
               reference: `${SwyftReference}`,
               customerNumber: checkMarchantVerificationDto.phoneNumber,
+              callbackUrl: checkMarchantVerificationDto.callback_url,
             },
           });
 
