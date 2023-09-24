@@ -33,6 +33,6 @@ export class TelcoServiceService {
 
     const response = await axios.post(`${process.env.endpoint}`, body);
 
-    console.log(response);
+    console.log(response.data);
   }
 }
