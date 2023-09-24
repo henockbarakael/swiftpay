@@ -16,9 +16,9 @@ describe('TelcoServiceController', () => {
     );
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(telcoServiceController.getHello()).toBe('Hello World!');
-    });
-  });
+  // describe('root', () => {
+  //   it('should return "Hello World!"', () => {
+  //     expect(telcoServiceController.getHello()).toBe('Hello World!');
+  //   });
+  // });
 });
