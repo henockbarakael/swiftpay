@@ -25,7 +25,7 @@ export class TelcoServiceService {
       email: process.env.email,
       reference: data.reference,
       method:
-        process.env.service.toLowerCase() == 'vodacom'
+        data.service.toLowerCase() == 'vodacom'
           ? 'mpesa'
           : process.env.service.toLowerCase(),
       callback_url: '',
