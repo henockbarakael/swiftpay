@@ -68,6 +68,9 @@ export class GatewayService {
           const transactionStatus =
             await this.dbService.transactionStatus.findFirst();
 
+          // swyft reference
+          const SwyftReference = referenceGenerator();
+
           // store transaction in the database
           const ack = await this.dbService.dailyOperation.create({
             data: {
@@ -79,7 +82,7 @@ export class GatewayService {
               currencyId: existCurrency[0].id,
               serviceId: existService[0].id,
               transactionStatusId: transactionStatus.id,
-              reference: referenceGenerator(),
+              reference: `${SwyftReference}`,
               customerNumber: checkMarchantVerificationDto.phoneNumber,
             },
           });

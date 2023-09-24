@@ -10,12 +10,29 @@ export class TelcoServiceService {
     private readonly telcoClient: ClientKafka,
   ) {}
 
-  handleTelcoRequest(data: Request) {
-    console.log(process.env.endpoint);
-
-    // call axios to send request to freshpay
-    // wait for a callback
-    // process the callback
+  async handleTelcoRequest(data: Request) {
     console.log(data);
+    // request body
+    const body = {
+      merchant_id: process.env.merchant_id,
+      merchant_secret: process.env.merchant_secret,
+      amount: data.amount,
+      currency: data.currency,
+      action: data.action,
+      customer_number: data.phone_number,
+      firstname: process.env.firstname,
+      lastname: process.env.lastname,
+      email: process.env.email,
+      reference: data.reference,
+      method:
+        process.env.service.toLowerCase() == 'vodacom'
+          ? 'mpesa'
+          : process.env.service.toLowerCase(),
+      callback_url: '',
+    };
+
+    const response = await axios.post(`${process.env.endpoint}`, body);
+
+    console.log(response);
   }
 }
