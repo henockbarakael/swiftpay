@@ -8,19 +8,18 @@ export class TelcoServiceController {
 
   @EventPattern('vodacom')
   handleVodacomRequest(data: any) {
-    console.log(data);
-    this.telcoServiceService.handleTelcoRequest(data.value);
+    this.telcoServiceService.handleTelcoRequest(data);
   }
 
   @EventPattern('airtel')
   handleAirtelRequest(data: any) {
     console.log(data);
-    this.telcoServiceService.handleTelcoRequest(data.value);
+    this.telcoServiceService.handleTelcoRequest(data);
   }
 
   @EventPattern('orange')
   handleOrangeRequest(data: any) {
     console.log(data);
-    this.telcoServiceService.handleTelcoRequest(data.value);
+    this.telcoServiceService.handleTelcoRequest(data);
   }
 }

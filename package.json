@@ -58,6 +58,7 @@
     "@types/cache-manager": "^4.0.2",
     "@types/node-rsa": "^1.1.1",
     "argon2": "^0.30.3",
+    "axios": "^1.5.0",
     "cache-manager": "^5.1.7",
     "cache-manager-redis-store": "2.0.0",
     "class-transformer": "^0.5.1",
