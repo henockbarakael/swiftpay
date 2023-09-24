@@ -26,6 +26,7 @@ export class CreateVerificationDto {
   @IsNotEmpty()
   action: ActionOperationEnum;
 
+  @IsNotEmpty()
   callback_url: string;
 }
 
@@ -55,5 +56,6 @@ export class CheckMarchantVerificationDto {
   @IsNotEmpty()
   action: ActionOperationEnum;
 
+  @IsNotEmpty()
   callback_url: string;
 }
