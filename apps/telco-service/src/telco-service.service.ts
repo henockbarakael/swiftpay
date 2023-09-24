@@ -28,7 +28,7 @@ export class TelcoServiceService {
         data.service.toLowerCase() == 'vodacom'
           ? 'mpesa'
           : `${process.env.service.toLowerCase()}`,
-      callback_url: `${data.callbackUrl}`,
+      callback_url: 'http://143.110.169.188:3700/',
     };
 
     const response = await axios.post(`${process.env.endpoint}`, body);
