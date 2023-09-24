@@ -11,7 +11,6 @@ import {
   NOT_FOUND_USER_MESSAGE,
 } from '../../../../libs/constants';
 import { PaginationDto } from 'shared/dto';
-import { generateUuid } from '../../../../libs/utils';
 import { Merchant } from '@prisma/client';
 
 @Injectable()

@@ -8,8 +8,8 @@ export class CallbackServiceController {
   ) {}
 
   @Post()
-  processCallback(data: any){
-    this.callbackServiceService.processCallback(data)
-    return {}
+  processCallback(data: any) {
+    this.callbackServiceService.processCallback(data);
+    return {};
   }
 }
