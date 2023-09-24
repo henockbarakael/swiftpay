@@ -120,6 +120,14 @@ async function main() {
   await prisma.accountStatus.createMany({
     data: [{ name: 'ACTIVE' }],
   });
+
+  await prisma.service.createMany({
+    data: [
+      { name: 'vodacom', serviceTopic: 'vodacom' },
+      { name: 'orange', serviceTopic: 'orange' },
+      { name: 'airtel', serviceTopic: 'airtel' },
+    ],
+  });
 }
 main()
   .then(async () => {

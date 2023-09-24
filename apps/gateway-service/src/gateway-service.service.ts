@@ -92,6 +92,7 @@ export class GatewayService {
               customerNumber: checkMarchantVerificationDto.phoneNumber,
               callbackUrl: checkMarchantVerificationDto.callback_url,
               action: checkMarchantVerificationDto.action,
+              merchantId: checkMarchantVerificationDto.merchantID,
             },
           });
 
