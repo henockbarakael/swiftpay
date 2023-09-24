@@ -1,23 +1,23 @@
 export class Request {
-  merchantId: string;
-  phone_number: string;
+  merchantID: string;
+  phoneNumber: string;
   amount: number;
   currency: string;
   service: string;
   reference: string;
   action: string;
-  callback_url: string;
+  callbackUrl: string;
 
   toString() {
     return JSON.stringify({
-      merchantId: this.merchantId,
-      phone_number: this.phone_number,
+      merchantId: this.merchantID,
+      phone_number: this.phoneNumber,
       amount: this.amount,
       currency: this.currency,
       service: this.service,
       reference: this.reference,
       action: this.action,
-      callback_url: this.callback_url,
+      callback_url: this.callbackUrl,
     });
   }
 }

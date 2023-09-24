@@ -148,6 +148,7 @@ export class GatewayService {
             service: checkMarchantVerificationDto.service,
             reference: checkMarchantVerificationDto.reference,
             action: checkMarchantVerificationDto.action,
+            callbackUrl: checkMarchantVerificationDto.callback_url,
           });
 
           return true;
