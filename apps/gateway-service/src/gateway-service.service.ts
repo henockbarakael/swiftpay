@@ -6,11 +6,13 @@ import { referenceGenerator, checkValidOperator } from 'libs/utils';
 import { ClientKafka } from '@nestjs/microservices';
 import { EncryptionService } from 'shared/encryption';
 import { v4 } from 'uuid';
+import { WalletService } from 'shared/wallet';
 @Injectable()
 export class GatewayService {
   constructor(
     private dbService: DatabaseService,
     @Inject('gateway') private gatewayClient: ClientKafka,
+    private readonly walletService: WalletService,
     private encryptionService: EncryptionService,
   ) {}
 
@@ -66,7 +68,11 @@ export class GatewayService {
           console.log('before db write');
 
           const transactionStatus =
-            await this.dbService.transactionStatus.findFirst();
+            await this.dbService.transactionStatus.findFirst({
+              where: {
+                status: 'PENDING',
+              },
+            });
 
           // swyft reference
           const SwyftReference = referenceGenerator();
@@ -85,8 +91,51 @@ export class GatewayService {
               reference: `${SwyftReference}`,
               customerNumber: checkMarchantVerificationDto.phoneNumber,
               callbackUrl: checkMarchantVerificationDto.callback_url,
+              action: checkMarchantVerificationDto.action,
             },
           });
+
+          // wallet check and failed in case
+
+          if (
+            checkMarchantVerificationDto.action.toUpperCase() ===
+            ActionOperationEnum.CREDIT
+          ) {
+            const wallet = await this.walletService.getWalletbyCurrency(
+              checkMarchantVerificationDto.merchantID,
+              checkMarchantVerificationDto.currency,
+            );
+
+            const isEnoughMoney = this.walletService.isEnoughMoney(
+              wallet,
+              checkMarchantVerificationDto.amount,
+            );
+
+            if (!isEnoughMoney) {
+              const updateStatus =
+                await this.dbService.transactionStatus.findFirst({
+                  where: {
+                    status: 'FAILED',
+                  },
+                });
+
+              await this.dbService.dailyOperation.update({
+                data: {
+                  transactionStatusId: updateStatus.id,
+                },
+                where: {
+                  id: SwyftReference,
+                },
+              });
+              return false;
+            } else {
+              await this.walletService.creditWallet(
+                checkMarchantVerificationDto.currency,
+                checkMarchantVerificationDto.merchantID,
+                checkMarchantVerificationDto.amount,
+              );
+            }
+          }
 
           console.log(`db ack ${ack}`);
 

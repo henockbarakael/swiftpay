@@ -112,6 +112,14 @@ async function main() {
   await prisma.currency.createMany({
     data: [{ currency: 'CDF' }, { currency: 'USD' }],
   });
+
+  await prisma.transactionStatus.createMany({
+    data: [{ status: 'PENDING' }, { status: 'FAILED' }, { status: 'SUCCESS' }],
+  });
+
+  await prisma.accountStatus.createMany({
+    data: [{ name: 'ACTIVE' }],
+  });
 }
 main()
   .then(async () => {
