@@ -234,14 +234,19 @@ export class GatewayService {
       },
     });
 
+    if (params.length === 0) {
+      return false;
+    }
+
     const restriction = params.find(
       (e) => e.value.toLowerCase() === service.toLowerCase(),
     );
 
     if (restriction !== undefined) {
       return false;
+    } else {
+      return true;
     }
-    return true;
   }
 
   async actionAuthorizationCheck(action: string, merchantId: string) {
@@ -254,14 +259,19 @@ export class GatewayService {
       },
     });
 
+    if (params.length === 0) {
+      return false;
+    }
+
     const restriction = params.find(
       (e) => e.value.toLowerCase() === action.toLowerCase(),
     );
 
     if (restriction !== undefined) {
       return false;
+    } else {
+      return true;
     }
-    return true;
   }
 
   async transactionLimitCheck(
