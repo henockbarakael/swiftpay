@@ -14,6 +14,5 @@ export class TelcoServiceService {
     // wait for a callback
     // process the callback
     console.log(data);
-    return;
   }
 }

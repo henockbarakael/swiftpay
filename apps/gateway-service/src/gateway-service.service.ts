@@ -5,6 +5,7 @@ import { ActionOperationEnum } from '@prisma/client';
 import { referenceGenerator, checkValidOperator } from 'libs/utils';
 import { ClientKafka } from '@nestjs/microservices';
 import { EncryptionService } from 'shared/encryption';
+import { v4 } from 'uuid';
 @Injectable()
 export class GatewayService {
   constructor(
