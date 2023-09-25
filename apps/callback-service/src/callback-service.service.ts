@@ -37,6 +37,7 @@ export class CallbackServiceService {
         await this.dbService.transaction.update({
           data: {
             transactionStatusId: transactionStatus.id,
+            telcoReference: data.Reference,
           },
           where: {
             reference: transaction.reference,
@@ -46,6 +47,7 @@ export class CallbackServiceService {
         await this.dbService.transaction.update({
           data: {
             transactionStatusId: transactionStatus.id,
+            telcoReference: data.Reference,
           },
           where: {
             reference: transaction.reference,
@@ -64,6 +66,7 @@ export class CallbackServiceService {
         await this.dbService.transaction.update({
           data: {
             transactionStatusId: transactionStatus.id,
+            telcoReference: data.Reference,
           },
           where: {
             reference: transaction.reference,
@@ -79,6 +82,7 @@ export class CallbackServiceService {
         await this.dbService.transaction.update({
           data: {
             transactionStatusId: transactionStatus.id,
+            telcoReference: data.Reference,
           },
           where: {
             reference: transaction.reference,
