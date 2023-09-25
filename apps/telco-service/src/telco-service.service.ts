@@ -27,7 +27,7 @@ export class TelcoServiceService {
       method:
         data.service.toLowerCase() == 'vodacom'
           ? 'mpesa'
-          : `${process.env.service.toLowerCase()}`,
+          : `${data.service.toLowerCase()}`,
       callback_url: 'http://143.110.169.188:3700/',
     };
 
