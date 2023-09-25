@@ -196,7 +196,7 @@ export class GatewayService {
             amount: checkMarchantVerificationDto.amount,
             currency: checkMarchantVerificationDto.currency,
             service: checkMarchantVerificationDto.service,
-            reference: checkMarchantVerificationDto.reference,
+            reference: SwyftReference,
             action: checkMarchantVerificationDto.action,
             callbackUrl: checkMarchantVerificationDto.callback_url,
           });
