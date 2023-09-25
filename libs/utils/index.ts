@@ -44,8 +44,8 @@ export const checkValidOperator = (
   service: string,
 ): boolean => {
   const vodacom = ['81', '82', '83'];
-  const airtel = ['99', '98'];
-  const orange = ['84', '85'];
+  const airtel = ['99', '98', '97'];
+  const orange = ['84', '85', '86'];
   const africell = ['90'];
   const operatorId = phoneNumber.slice(4, 6);
 
