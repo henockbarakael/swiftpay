@@ -22,15 +22,15 @@ ENV DATABASE_URL=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?schema
 
 ENV KAFKA_BROKERS=161.35.161.18:9092,161.35.168.245:9092,161.35.165.31:9092
 
-ENV merchant_id=jwHfjdopenc3yt\$Tb
+ENV merchant_id=jEiLY]>2)<PH@;C.b
 
-ENV merchant_secret=jz5ulzR!a54kGg!iF
+ENV merchant_secret=jzz2tuCqYONWDO#Tab
 
-ENV firstname=SupportTest
+ENV firstname=SwiftPay
 
-ENV lastname=SupportTest
+ENV lastname=SwiftPay
 
-ENV email=support@gofreshbakery.com
+ENV email=zachariedende@gmail.com
 
 ENV endpoint=https://paydrc.gofreshbakery.net/api/v5/
 
