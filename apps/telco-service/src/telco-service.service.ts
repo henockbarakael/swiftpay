@@ -18,7 +18,7 @@ export class TelcoServiceService {
         merchant_id: `${process.env.merchant_id}`,
         merchant_secret: `${process.env.merchant_secret}`,
         amount: data.amount,
-        currency: `${data.currency}`,
+        currency: `${data.currency.toUpperCase()}`,
         action: `${data.action.toLowerCase()}`,
         customer_number: `0${data.phoneNumber.slice(4)}`,
         firstname: `${process.env.firstname}`,
