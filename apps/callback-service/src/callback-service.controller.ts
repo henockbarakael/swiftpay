@@ -1,5 +1,6 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { CallbackServiceService } from './callback-service.service';
+import { Callback } from './dto/callback.dto';
 
 @Controller()
 export class CallbackServiceController {
@@ -8,8 +9,8 @@ export class CallbackServiceController {
   ) {}
 
   @Post()
-  processCallback(data) {
-    console.log(data)
+  processCallback(@Body() data: Callback) {
+    console.log(data);
     this.callbackServiceService.processCallback(data);
     return { message: 'callback received' };
   }
