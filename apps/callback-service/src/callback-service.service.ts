@@ -40,6 +40,7 @@ export class CallbackServiceService {
           data: {
             transactionStatusId: transactionStatus.id,
             telcoReference: data.PayDRC_Reference,
+            telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
             reference: transaction.reference,
@@ -50,6 +51,7 @@ export class CallbackServiceService {
           data: {
             transactionStatusId: transactionStatus.id,
             telcoReference: data.PayDRC_Reference,
+            telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
             reference: transaction.reference,
@@ -69,6 +71,7 @@ export class CallbackServiceService {
           data: {
             transactionStatusId: transactionStatus.id,
             telcoReference: data.PayDRC_Reference,
+            telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
             reference: transaction.reference,
@@ -85,6 +88,7 @@ export class CallbackServiceService {
           data: {
             transactionStatusId: transactionStatus.id,
             telcoReference: data.PayDRC_Reference,
+            telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
             reference: transaction.reference,
