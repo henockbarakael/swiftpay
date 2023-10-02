@@ -1,4 +1,6 @@
 export class Callback {
+  Status_Description: string;
+  Trans_Status_Description: string;
   Status: string;
   Comment: string;
   Trans_Status: string;
@@ -8,4 +10,5 @@ export class Callback {
   Customer_Details: string;
   Reference: string;
   Action: string;
+  PayDRC_Reference: string;
 }

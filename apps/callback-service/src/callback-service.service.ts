@@ -19,6 +19,8 @@ export class CallbackServiceService {
       },
     });
 
+    console.log('transaction', transaction);
+
     if (data.Trans_Status === 'Failed') {
       const transactionStatus =
         await this.dbService.transactionStatus.findFirst({
@@ -34,20 +36,20 @@ export class CallbackServiceService {
           data.Currency,
         );
 
-        await this.dbService.transaction.update({
+        await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.Reference,
+            telcoReference: data.PayDRC_Reference,
           },
           where: {
             reference: transaction.reference,
           },
         });
       } else {
-        await this.dbService.transaction.update({
+        await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.Reference,
+            telcoReference: data.PayDRC_Reference,
           },
           where: {
             reference: transaction.reference,
@@ -63,10 +65,10 @@ export class CallbackServiceService {
         });
 
       if (transaction.action.toLowerCase() == 'credit') {
-        await this.dbService.transaction.update({
+        await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.Reference,
+            telcoReference: data.PayDRC_Reference,
           },
           where: {
             reference: transaction.reference,
@@ -79,10 +81,10 @@ export class CallbackServiceService {
           transaction.amount,
         );
 
-        await this.dbService.transaction.update({
+        await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.Reference,
+            telcoReference: data.PayDRC_Reference,
           },
           where: {
             reference: transaction.reference,
@@ -90,7 +92,8 @@ export class CallbackServiceService {
         });
 
         // send callback
-        await axios.post(transaction.callbackUrl, {
+        //await axios.post(transaction.callbackUrl,
+        console.log({
           Trans_Status: data.Trans_Status,
           Currency: data.Currency,
           Amount: data.Amount,
