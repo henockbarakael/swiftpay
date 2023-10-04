@@ -39,7 +39,7 @@ export class CallbackServiceService {
         await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.PayDRC_Reference,
+            telcoReference: data.Financial_Institution_id,
             telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
@@ -50,7 +50,7 @@ export class CallbackServiceService {
         await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.PayDRC_Reference,
+            telcoReference: data.Financial_Institution_id,
             telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
@@ -70,7 +70,7 @@ export class CallbackServiceService {
         await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.PayDRC_Reference,
+            telcoReference: data.Financial_Institution_id,
             telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {
@@ -87,7 +87,7 @@ export class CallbackServiceService {
         await this.dbService.dailyOperation.update({
           data: {
             transactionStatusId: transactionStatus.id,
-            telcoReference: data.PayDRC_Reference,
+            telcoReference: data.Financial_Institution_id,
             telcoStatusDescription: data.Trans_Status_Description,
           },
           where: {

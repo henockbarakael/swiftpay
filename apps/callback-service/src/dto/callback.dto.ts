@@ -11,4 +11,5 @@ export class Callback {
   Reference: string;
   Action: string;
   PayDRC_Reference: string;
+  Financial_Institution_id: string;
 }
