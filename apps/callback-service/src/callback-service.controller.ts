@@ -9,7 +9,8 @@ export class CallbackServiceController {
   ) {}
 
   @Post()
-  processCallback(@Body() data: Callback) {
+  processCallback(@Body() data: any) {
+    console.log('print', data);
     this.callbackServiceService.processCallback(data);
     return { message: 'callback received' };
   }
