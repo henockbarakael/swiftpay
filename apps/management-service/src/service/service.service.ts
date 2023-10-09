@@ -3,7 +3,6 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { DatabaseService } from 'shared/database';
 import { CREATE_TELCO_SERVICE_FAIL_MESSAGE } from '../../../../libs/constants';
-import { generateUuid } from '../../../../libs/utils';
 import { Service } from '@prisma/client';
 
 @Injectable()
@@ -13,7 +12,6 @@ export class ServiceService {
     try {
       return await this.prismaService.service.create({
         data: {
-          id: generateUuid(),
           ...createServiceDto,
         },
       });
