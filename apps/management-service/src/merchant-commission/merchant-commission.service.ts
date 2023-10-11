@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UUID } from 'crypto';
-import { UpdateCommission } from '../dto/commission-update.dto';
+import { UpdateCommission } from './dto/commission-update.dto';
 import { DatabaseService } from 'shared/database';
-import { Commission } from '../dto/commission.dto';
+import { Commission } from './dto/commission.dto';
 
 @Injectable()
 export class MerchantCommissionService {
