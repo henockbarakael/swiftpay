@@ -10,6 +10,7 @@ import { MerchantModule } from './merchant/merchant.module';
 import { AccountStatusModule } from './account-status/account-status.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { AgregatorParameterModule } from './agregator-parameter/agregator-parameter.module';
+import { TransactionStatusModule } from './transaction-status/transaction-status.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AgregatorParameterModule } from './agregator-parameter/agregator-parame
     AccountStatusModule,
     BlacklistModule,
     AgregatorParameterModule,
+    TransactionStatusModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],
