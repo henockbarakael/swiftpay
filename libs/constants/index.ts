@@ -10,7 +10,15 @@ export const NOT_FOUND_USER_MESSAGE = "Cet utilisateur n'existe pas";
 export const CREATE_ROLE_FAIL_MESSAGE = "Oups! le role n'a pas été crée";
 
 export const CREATE_USER_FAIL_MESSAGE = 'Cant create user';
-export const CREATE_TELCO_SERVICE_FAIL_MESSAGE = 'Cant create service';
+export const CREATE_TELCO_SERVICE_FAIL_MESSAGE = "Can't create service";
+export const CREATE_BLACK_LIST_FAIL_MESSAGE = 'Cant create blacklist number';
+
+export const CREATE_BLACK_LIST_NOTFOUND_MESSAGE = 'Can not blacklist number';
+export const UPDATE_BLACK_LIST_FAIL_MESSAGE =
+  'Can not update  blacklist number';
+
+export const DELETE_BLACK_LIST_FAIL_MESSAGE =
+  'Can not delete a  blacklist number';
 export const NOTIFICATION_FAIL_MESSAGE = 'Nofitication fails';
 
 export const USER_ACTIVE_ALREADY_MESSAGE = 'User already active';

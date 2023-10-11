@@ -8,6 +8,7 @@ import { InstitutionModule } from './institution/institution.module';
 import { ServiceModule } from './service/service.module';
 import { MerchantModule } from './merchant/merchant.module';
 import { AccountStatusModule } from './account-status/account-status.module';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AccountStatusModule } from './account-status/account-status.module';
     ServiceModule,
     MerchantModule,
     AccountStatusModule,
+    BlacklistModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],
