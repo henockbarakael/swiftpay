@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UUID } from 'crypto';
-import { UpdateCommission } from 'libs/dto/commission.dto';
+import { UpdateCommission } from '../dto/commission-update.dto';
 import { DatabaseService } from 'shared/database';
-import { Commission } from 'shared/types/commission.type';
+import { Commission } from '../dto/commission.dto';
 
 @Injectable()
 export class MerchantCommissionService {
@@ -47,7 +47,7 @@ export class MerchantCommissionService {
     const response = await this.commission.merchantCommission.create({
       data: {
         serviceId: commission.serviceId,
-        action: commission.action,
+        action: commission.action.toString(),
         commission: commission.commission,
       },
     });
