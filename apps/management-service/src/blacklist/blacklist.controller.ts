@@ -10,8 +10,10 @@ import {
 import { BlacklistService } from './blacklist.service';
 import { CreateBlacklistDto } from './dto/create-blacklist.dto';
 import { UpdateBlacklistDto } from './dto/update-blacklist.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('blacklist')
+@ApiTags('blacklist')
 export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) {}
 

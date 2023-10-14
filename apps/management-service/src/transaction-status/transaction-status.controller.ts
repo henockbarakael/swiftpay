@@ -1,8 +1,10 @@
 import { Controller, Get, Body } from '@nestjs/common';
 import { TransactionStatusService } from './transaction-status.service';
 import { TransactionStatus } from './dto/transaction.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@Controller('transactions-status')
+@ApiTags('transaction-status')
 export class TransactionStatusController {
   constructor(
     private readonly transactionStatusService: TransactionStatusService,

@@ -1,8 +1,10 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { AgregatorParameterService } from './agregator-parameter.service';
 import { Parameter } from './dto/parameter.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@Controller('agregator-parameter')
+@ApiTags('agregator-parameter')
 export class AgregatorParameterController {
   constructor(
     private readonly agregatorParameterService: AgregatorParameterService,

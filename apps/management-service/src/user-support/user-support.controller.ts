@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
 } from '@nestjs/common';
 import { UserSupportService } from './user-support.service';
 import { CreateUserSupportDto } from './dto/create-user-support.dto';

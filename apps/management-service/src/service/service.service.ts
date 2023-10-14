@@ -4,10 +4,12 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { DatabaseService } from 'shared/database';
 import { CREATE_TELCO_SERVICE_FAIL_MESSAGE } from '../../../../libs/constants';
 import { Service } from '@prisma/client';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ServiceService {
   constructor(private readonly prismaService: DatabaseService) {}
+
   async create(createServiceDto: CreateServiceDto): Promise<Service> {
     try {
       return await this.prismaService.service.create({
@@ -23,38 +25,42 @@ export class ServiceService {
   async findAll() {
     try {
       await this.prismaService.service.findMany();
-    } catch (e) {}
+    } catch (e) {
+      throw new NotAcceptableException();
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
+  async findOne(id: UUID) {
+    const service = await this.prismaService.service.findUnique({
+      where: { id: id },
+    });
+
+    return service;
   }
 
-  // async  update(id: string, updateServiceDto: UpdateServiceDto):Promise<ServiceEntity> {
-  //   try {
-  //     return await this.prismaService.service.update({
-  //       where{
-  //         id: id,
-  //       },
-  //       data:{
-  //         ...updateServiceDto
-  //       }
-  //     }));
-  //   } catch (error) {
-  //     throw new NotAcceptableException(CREATE_TELCO_SERVICE_FAIL_MESSAGE);
-  //   }
-  // }
-
-  async remove(id: string): Promise<Service> {
+  async remove(id: UUID): Promise<Service> {
     try {
-      return await this.prismaService.service.update({
+      const response = await this.prismaService.service.delete({
         where: { id },
-        data: { deletedAt: new Date(Date.now()) },
       });
+
+      return response;
     } catch (error) {}
   }
 
-  update(id: string, updateServiceDto: UpdateServiceDto) {
-    /* TODO document why this method 'update' is empty */
+  async update(id: UUID, updateServiceDto: UpdateServiceDto) {
+    try {
+      const response = await this.prismaService.service.update({
+        data: {
+          name: updateServiceDto.name,
+          serviceTopic: updateServiceDto.serviceTopic,
+        },
+        where: { id: id },
+      });
+
+      return response;
+    } catch (error) {
+      throw new NotAcceptableException();
+    }
   }
 }

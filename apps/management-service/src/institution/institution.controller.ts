@@ -12,8 +12,8 @@ import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('institution')
 @Controller('institution')
+@ApiTags('institution')
 export class InstitutionController {
   constructor(private readonly institutionService: InstitutionService) {}
 
