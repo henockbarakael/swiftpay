@@ -243,7 +243,7 @@ model MerchantCommission {
 
 model Service {
   id                 String               @id @default(uuid())
-  name               String
+  name               String               @unique
   serviceTopic       String
   deletedAt          DateTime?
   MerchantCommission MerchantCommission[]

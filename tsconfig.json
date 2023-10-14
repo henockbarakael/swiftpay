@@ -44,11 +44,9 @@
       ],
       "shared/dto": [
         "libs/dto/src",
-        "libs/dto/src"
       ],
       "shared/dto/*": [
         "libs/dto/src/*",
-        "libs/dto/src/*"
       ],
       "shared/encryption": [
         "libs/encryption/src"
@@ -61,7 +59,10 @@
       ],
       "shared/wallet/*": [
         "libs/wallet/src/*"
-      ]
+      ],
+      "shared/merchant-commission": [
+        "libs/merchant-commission/src"
+      ],
     }
   }
 }

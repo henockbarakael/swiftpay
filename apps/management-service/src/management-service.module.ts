@@ -9,6 +9,7 @@ import { ServiceModule } from './service/service.module';
 import { MerchantModule } from './merchant/merchant.module';
 import { AccountStatusModule } from './account-status/account-status.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
+import { MerchantCommissionModule } from './merchant-commission/merchant-commission.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     MerchantModule,
     AccountStatusModule,
     BlacklistModule,
+    MerchantCommissionModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],
