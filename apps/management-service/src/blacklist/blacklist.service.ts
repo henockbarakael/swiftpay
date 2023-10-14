@@ -16,6 +16,7 @@ import {
 @Injectable()
 export class BlacklistService {
   constructor(private readonly prismaService: DatabaseService) {}
+
   async create(createBlacklistDto: CreateBlacklistDto) {
     try {
       return await this.prismaService.blacklistNumber.create({
