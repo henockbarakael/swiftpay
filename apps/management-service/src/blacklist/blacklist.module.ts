@@ -5,5 +5,6 @@ import { BlacklistController } from './blacklist.controller';
 @Module({
   controllers: [BlacklistController],
   providers: [BlacklistService],
+  exports: [BlacklistService],
 })
 export class BlacklistModule {}

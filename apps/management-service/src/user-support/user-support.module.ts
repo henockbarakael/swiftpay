@@ -5,5 +5,6 @@ import { UserSupportController } from './user-support.controller';
 @Module({
   controllers: [UserSupportController],
   providers: [UserSupportService],
+  exports: [UserSupportService],
 })
 export class UserSupportModule {}
