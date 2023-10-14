@@ -47,6 +47,27 @@ $ npm install
 
 ``` 
 
+
+### Agregatir Account Parameter Naming
+
+```bash
+
+		
+	      AIRTEL	MAINTENANCE
+STATUS	VODACOM	LOCKED
+	      ORANGE	OPEN
+		
+		
+	        FRESHPAY	
+ENDPOINT	CINETPAY	ACTIVE
+	        AVADAPAY	DISABLE
+		
+		
+PLATFORM	STATUS	OPEN
+		              MAINTENANCE
+
+```
+
 ## Running the app
 
 ```bash
