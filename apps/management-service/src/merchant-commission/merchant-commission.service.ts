@@ -3,6 +3,7 @@ import { UUID } from 'crypto';
 import { UpdateCommission } from './dto/commission-update.dto';
 import { DatabaseService } from 'shared/database';
 import { Commission } from './dto/commission.dto';
+import { ActionOperationEnum } from '@prisma/client';
 
 @Injectable()
 export class MerchantCommissionService {
@@ -21,7 +22,10 @@ export class MerchantCommissionService {
     const response = await this.commission.merchantCommission.update({
       data: {
         commission: newCommission.commission,
-        action: newCommission.action,
+        action:
+          newCommission.action == ActionOperationEnum.CREDIT
+            ? ActionOperationEnum.CREDIT
+            : ActionOperationEnum.DEBIT,
         serviceId: newCommission.serviceId,
       },
       where: {
@@ -47,7 +51,10 @@ export class MerchantCommissionService {
     const response = await this.commission.merchantCommission.create({
       data: {
         serviceId: commission.serviceId,
-        action: commission.action.toString(),
+        action:
+          commission.action == ActionOperationEnum.CREDIT
+            ? ActionOperationEnum.CREDIT
+            : ActionOperationEnum.DEBIT,
         commission: commission.commission,
       },
     });
