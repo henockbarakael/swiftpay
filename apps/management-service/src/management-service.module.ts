@@ -11,6 +11,7 @@ import { AccountStatusModule } from './account-status/account-status.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { MerchantCommissionModule } from './merchant-commission/merchant-commission.module';
 import { AgregatorParameterModule } from './agregator-parameter/agregator-parameter.module';
+import { TransactionStatusModule } from './transaction-status/transaction-status.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AgregatorParameterModule } from './agregator-parameter/agregator-parame
     BlacklistModule,
     MerchantCommissionModule,
     AgregatorParameterModule,
+    TransactionStatusModule,
   ],
   controllers: [ManagementServiceController],
   providers: [ManagementServiceService],
