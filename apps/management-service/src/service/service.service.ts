@@ -24,7 +24,7 @@ export class ServiceService {
 
   async findAll() {
     try {
-      await this.prismaService.service.findMany();
+      return await this.prismaService.service.findMany();
     } catch (e) {
       throw new NotAcceptableException();
     }
