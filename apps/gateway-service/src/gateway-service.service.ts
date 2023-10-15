@@ -186,7 +186,7 @@ export class GatewayService {
           }
 
           // write to kafka
-          const topic = existService[0].name.toLowerCase();
+          const topic = existService[0].serviceTopic.toLowerCase();
 
           console.log(topic);
 
