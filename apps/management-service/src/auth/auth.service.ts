@@ -142,7 +142,6 @@ export class AuthService {
       isActive: true,
       phone: payload.phone,
       password: hash,
-      merchantId: payload.merchantId,
     } as unknown as Partial<User>;
     try {
       return await this.prismaService.user.create({
