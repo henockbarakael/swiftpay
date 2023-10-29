@@ -14,14 +14,13 @@ import {
   PASSWORD_FAIL_MESSAGE,
 } from 'libs/constants';
 import { IUserResponse } from 'shared/types';
-import { RoleEnum } from 'libs/enums';
+import { RoleEnum, UserTypeEnum } from 'libs/enums';
 import { DatabaseService } from 'shared/database';
-import { generateUuid } from '../../../../libs/utils';
 import { MerchantService } from '../merchant/merchant.service';
-import { CreateMerchantDto } from '../merchant/dto/create-merchant.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { Role, User, UserRole } from '@prisma/client';
+import { Merchant, Role, User, UserRole } from '@prisma/client';
+import { CreateMerchantDto } from '../merchant/dto/create-merchant.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,6 +43,8 @@ export class AuthService {
               role: true,
             },
           },
+          merchant: true,
+          userSupport: true,
         },
       });
       if (!userRepo) {
@@ -52,12 +53,6 @@ export class AuthService {
         const pwdMatches = await argon.verify(userRepo.password, password);
         const userRO = userRepo as unknown as IUserResponse;
         if (pwdMatches) {
-          if (userRepo?.userRoles[0]?.role?.slug === RoleEnum.MERCHANT) {
-            const merchant = await this.merchantService.findByUserId(
-              userRepo[0]?.id,
-            );
-            return this.getUserAuth(merchant as unknown as IUserResponse);
-          }
           return this.getUserAuth(userRO);
         } else {
           throw new NotFoundException(PASSWORD_FAIL_MESSAGE);
@@ -77,24 +72,54 @@ export class AuthService {
         this.findUserRole(roleSlug),
         this.createUser(data, hash),
       ]);
-
-      if (this.isUserEmpty(user) && !role) {
+      if (!this.isUserEmpty(user) && role) {
+        if (payload.type === UserTypeEnum.MERCHANT) {
+          await this.handleMerchantUser(user, payload);
+        } else {
+          await this.handleRegularUser(user, payload);
+        }
+        await this.createOrUpdateUserRole(user, role);
+        return user;
+      } else {
         throw new NotAcceptableException();
-      } else if (role.slug === RoleEnum.MERCHANT) {
-        console.log('1:', user);
-        const [merchant, userRole] = await Promise.all([
-          this.createMerchant({
-            userId: user.id,
-            accountStatusId: payload.accountStatusId,
-            institutionId: payload.institutionId,
-          }),
-          this.createUserRole(user, role),
-        ]);
-        return merchant;
       }
     } catch (e) {
       // Gérer l'exception ici
     }
+  }
+  async findExistMerchant(merchantId: string): Promise<Merchant> {
+    return await this.merchantService.findOne(merchantId);
+  }
+
+  async handleMerchantUser(user: User, payload: CreateAuthDto): Promise<void> {
+    let existMerchant = null;
+    if (payload.merchantId !== '' || payload.merchantId === undefined) {
+      existMerchant = await this.findExistMerchant(payload.merchantId);
+      this.update(user.id, { merchantId: existMerchant.id });
+    } else {
+      const merchant = await this.addNewMerchant({
+        name: payload.merchantName,
+        accountStatusId: payload.accountStatusId,
+        institutionId: payload.institutionId,
+      });
+      this.update(user.id, { merchantId: merchant.id });
+    }
+  }
+  async handleRegularUser(user: User, payload: CreateAuthDto): Promise<void> {
+    await this.prismaService.userSupport.create({
+      data: {
+        accountStatusId: payload.accountStatusId,
+        userId: user.id,
+      },
+    });
+  }
+  async createOrUpdateUserRole(user: User, role: Role): Promise<void> {
+    await this.prismaService.userRole.create({
+      data: {
+        roleId: role.id,
+        userId: user.id,
+      },
+    });
   }
 
   private async hashPassword(password: string): Promise<string> {
@@ -117,6 +142,7 @@ export class AuthService {
       isActive: true,
       phone: payload.phone,
       password: hash,
+      merchantId: payload.merchantId,
     } as unknown as Partial<User>;
     try {
       return await this.prismaService.user.create({
@@ -182,7 +208,7 @@ export class AuthService {
       return response;
     } catch (error) {}
   }
-  private async createMerchant(payload: CreateMerchantDto) {
+  private async addNewMerchant(payload: CreateMerchantDto) {
     try {
       return await this.merchantService.create(payload);
     } catch (e) {}

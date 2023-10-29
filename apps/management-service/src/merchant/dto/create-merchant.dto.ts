@@ -5,7 +5,7 @@ export class CreateMerchantDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  userId: string;
+  name: string;
 
   @IsString()
   @ApiProperty()

@@ -96,20 +96,21 @@ model User {
   userSupport       UserSupport? @relation(fields: [userSupportId], references: [id])
   AuditLog          AuditLog[]
 
+  @@unique([userSupportId])
   @@map("users")
 }
 
 model Merchant {
-  id            String        @id @default(uuid())
-  userId        String
-  institutionId String
-  deletedAt     DateTime?
-  accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
+  id              String    @id @default(uuid())
+  name            String
+  institutionId   String
+  deletedAt       DateTime?
+  accountStatusId String
 
+  accountStatus            AccountStatus              @relation(fields: [accountStatusId], references: [id])
   institution              Institution                @relation(fields: [institutionId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter[]
-  accountStatusId          String
   DailyOperation           DailyOperation[]
   Transaction              Transaction[]
   users                    User[]
@@ -123,7 +124,7 @@ model UserSupport {
   deletedAt       DateTime?
   accountStatusId String
   accountStatus   AccountStatus @relation(fields: [accountStatusId], references: [id])
-  users           User[]
+  user            User?
 
   @@map("users_support")
 }
