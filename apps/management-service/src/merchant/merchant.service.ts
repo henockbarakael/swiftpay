@@ -18,12 +18,7 @@ export class MerchantService {
   constructor(private readonly prismaService: DatabaseService) {}
   async create(createMerchantDto: CreateMerchantDto): Promise<Merchant> {
     try {
-      const [user, accountStatus, institution] = await Promise.all([
-        await this.prismaService.user.findUniqueOrThrow({
-          where: {
-            id: createMerchantDto.userId,
-          },
-        }),
+      const [accountStatus, institution] = await Promise.all([
         await this.prismaService.accountStatus.findUniqueOrThrow({
           where: {
             id: createMerchantDto.accountStatusId,
@@ -39,14 +34,14 @@ export class MerchantService {
       // create du merchant
       const merchant = await this.prismaService.merchant.create({
         data: {
-          userId: user.id,
+          name: createMerchantDto.name,
           accountStatusId: accountStatus.id,
           institutionId: institution.id,
         },
         include: {
+          users: true,
           accountStatus: true,
           MerchantAccountParameter: true,
-          user: true,
           institution: true,
         },
       });
@@ -85,7 +80,7 @@ export class MerchantService {
           id,
         },
         include: {
-          user: true,
+          users: true,
           accountStatus: true,
           MerchantWallet: true,
           MerchantAccountParameter: true,
@@ -95,27 +90,7 @@ export class MerchantService {
       throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
     }
   }
-  async findByUserId(id: string): Promise<Merchant> {
-    try {
-      return await this.prismaService.merchant.findMany({
-        where: {
-          AND: [
-            {
-              userId: id,
-            },
-          ],
-        },
-        include: {
-          user: true,
-          accountStatus: true,
-          MerchantWallet: true,
-          MerchantAccountParameter: true,
-        },
-      })[0];
-    } catch (error) {
-      throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
-    }
-  }
+
   async update(
     id: string,
     updateMerchantDto: UpdateMerchantDto,
@@ -143,7 +118,7 @@ export class MerchantService {
     try {
       return await this.prismaService.merchant.findMany({
         include: {
-          user: true,
+          users: true,
           accountStatus: true,
           MerchantWallet: true,
           MerchantAccountParameter: true,

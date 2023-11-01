@@ -81,6 +81,7 @@ model User {
   country           String?
   imageUrl          String?
   isActive          Boolean?     @default(false)
+  isMerchant        Boolean?     @default(false)
   lastLogin         DateTime?
   phone             String?
   NbFailedAttempts  Int          @default(0)
@@ -89,42 +90,42 @@ model User {
   updatedAt         DateTime     @updatedAt
   deletedAt         DateTime?
   userRoles         UserRole[]
-  marchant          Merchant?
-  userSupport       UserSupport?
+  merchantId        String?
+  userSupportId     String?
+  merchant          Merchant?    @relation(fields: [merchantId], references: [id])
+  userSupport       UserSupport? @relation(fields: [userSupportId], references: [id])
   AuditLog          AuditLog[]
 
+  @@unique([userSupportId])
   @@map("users")
 }
 
 model Merchant {
-  id            String        @id @default(uuid())
-  userId        String
-  institutionId String
-  deletedAt     DateTime?
-  accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
+  id              String    @id @default(uuid())
+  name            String
+  institutionId   String
+  deletedAt       DateTime?
+  accountStatusId String
 
+  accountStatus            AccountStatus              @relation(fields: [accountStatusId], references: [id])
   institution              Institution                @relation(fields: [institutionId], references: [id])
-  user                     User                       @relation(fields: [userId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter[]
-  accountStatusId          String
   DailyOperation           DailyOperation[]
   Transaction              Transaction[]
+  users                    User[]
 
-  @@unique([userId])
   @@map("marchants")
 }
 
 model UserSupport {
-  id              String    @id @default(uuid())
+  id              String        @id @default(uuid())
   userId          String
   deletedAt       DateTime?
   accountStatusId String
+  accountStatus   AccountStatus @relation(fields: [accountStatusId], references: [id])
+  user            User?
 
-  user          User          @relation(fields: [userId], references: [id])
-  accountStatus AccountStatus @relation(fields: [accountStatusId], references: [id])
-
-  @@unique([userId])
   @@map("users_support")
 }
 
@@ -132,7 +133,7 @@ model Transaction {
   id                     String            @id @default(uuid())
   dailyOperationId       String            @default(uuid())
   merchantReference      String
-  merchant               Merchant?          @relation(fields: [merchantId], references: [id])
+  merchant               Merchant?         @relation(fields: [merchantId], references: [id])
   amount                 Float
   currency               Currency          @relation(fields: [currencyId], references: [id])
   service                Service           @relation(fields: [serviceId], references: [id])
@@ -164,7 +165,7 @@ model Transaction {
 model DailyOperation {
   id                     String            @id @default(uuid())
   merchantReference      String
-  merchant               Merchant?          @relation(fields: [merchantId], references: [id])
+  merchant               Merchant?         @relation(fields: [merchantId], references: [id])
   amount                 Float
   currency               Currency          @relation(fields: [currencyId], references: [id])
   service                Service           @relation(fields: [serviceId], references: [id])
@@ -384,4 +385,17 @@ enum AccountStatusEnum {
   PENDING
   APPROVED
   MEMBER
+}
+
+enum UserTypeEnum {
+  MERCHANT
+  USER_SUPPORT
+}
+
+enum UserRoleEnum {
+  ROLE_ROOT
+  ROLE_ADMIN
+  ROLE_WRITER
+  ROLE_MANAGER
+  ROLE_FREE_USER
 }

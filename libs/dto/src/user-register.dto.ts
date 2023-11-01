@@ -6,6 +6,7 @@ import {
   IsIn,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserTypeEnum } from 'libs/enums';
 
 export class UserRegisterDto {
   @IsOptional()
@@ -97,7 +98,7 @@ export class UserRegisterDto {
   phone: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({
     type: String,
     description: 'This is a required property',
@@ -105,9 +106,31 @@ export class UserRegisterDto {
   role: string;
 
   @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    description: 'This is a required property',
+  })
+  type: UserTypeEnum;
+
+  @IsString()
   @ApiProperty()
   @IsNotEmpty()
   institutionId: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+  })
+  merchantId: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+  })
+  merchantName: string;
 
   @IsNotEmpty()
   @ApiProperty()
