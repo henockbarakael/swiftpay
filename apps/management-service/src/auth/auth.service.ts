@@ -15,13 +15,12 @@ import {
   PASSWORD_FAIL_MESSAGE,
 } from 'libs/constants';
 import { IUserResponse } from 'shared/types';
-import { RoleEnum, UserTypeEnum } from 'libs/enums';
 import { DatabaseService } from 'shared/database';
 import { MerchantService } from '../merchant/merchant.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { Merchant, Role, User, UserRole } from '@prisma/client';
 import { CreateMerchantDto } from '../merchant/dto/create-merchant.dto';
+import { UserTypeEnum } from 'libs/enums';
 
 @Injectable()
 export class AuthService {
@@ -30,11 +29,11 @@ export class AuthService {
     private readonly merchantService: MerchantService,
     private jwtService: JwtService,
   ) {}
-  async signIn(loginDto: LoginDto) {
+  async signIn(loginDto: LoginDto): Promise<IUserResponse> {
     const { email, password } = loginDto;
 
     const user = await this.validateUser({ email, password });
-    return this.getUserAuth(user);
+    return await this.getUserAuth(user);
   }
 
   async register(payload: CreateAuthDto) {
@@ -182,33 +181,31 @@ export class AuthService {
         throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
       } else {
         const pwdMatches = await argon.verify(userRepo.password, password);
+
         const userRO = userRepo as unknown as IUserResponse;
         if (pwdMatches) {
           return userRO;
         } else {
-          throw new UnauthorizedException(PASSWORD_FAIL_MESSAGE);
+          throw new UnauthorizedException("Vous n'êtes pas autorisé ");
         }
       }
     } catch (error) {
       throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
     }
   }
-  generateJWT(user: Partial<IUserResponse>) {
-    const today = new Date();
-    const exp = new Date(today);
-    exp.setDate(today.getDate() + 60);
-    return this.jwtService.sign(
-      {
-        id: user.id,
-        exp: exp.getTime() / 1000,
-        email: user.email,
-      },
-      {
-        secret: jwtConstants.secret,
-      },
-    );
+  async generateJWTAccessToken(user: Partial<IUserResponse>) {
+    return await this.jwtService.signAsync(user, {
+      expiresIn: '1h',
+      secret: process.env.JWT_REFRESH_TOKEN_KEY,
+    });
   }
-  getUserAuth(payload: IUserResponse): IUserResponse {
+  async generateJWTRefeshToken(payload: IUserResponse) {
+    return await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+      secret: process.env.JWT_REFRESH_TOKEN_KEY,
+    });
+  }
+  async getUserAuth(payload: IUserResponse): Promise<IUserResponse> {
     try {
       const response: IUserResponse = {
         user: {
@@ -218,7 +215,8 @@ export class AuthService {
           isActive: payload.isActive,
           ...payload,
         },
-        access_token: this.generateJWT(payload),
+        accessToken: await this.generateJWTAccessToken(payload),
+        refeshToken: await this.generateJWTRefeshToken(payload),
       } as unknown as IUserResponse;
       return response;
     } catch (error) {}

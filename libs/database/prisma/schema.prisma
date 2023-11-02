@@ -10,6 +10,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//Enums
+enum ActionOperationEnum {
+  DEBIT
+  CREDIT
+}
+
+enum CurrencyEnum {
+  USD
+  EUR
+  CDF
+}
+
+enum TelcoServiceEnum {
+  AFRICELL
+  AIRTEL
+  ORANGE
+  VODACOM
+}
+
+enum AccountStatusEnum {
+  PENDING
+  APPROVED
+  MEMBER
+}
+
+enum UserTypeEnum {
+  MERCHANT
+  USER_SUPPORT
+}
+
+enum RoleEnum {
+  ROLE_ROOT
+  ROLE_ADMIN
+  ROLE_WRITER
+  ROLE_MANAGER
+  ROLE_FREE_USER
+}
+
 // Models
 model Permission {
   id             String           @id @default(uuid())
@@ -360,42 +398,4 @@ model Notification {
   type NotificationType @relation(fields: [typeId], references: [id])
 
   @@map("notifications")
-}
-
-//Enums
-enum ActionOperationEnum {
-  DEBIT
-  CREDIT
-}
-
-enum CurrencyEnum {
-  USD
-  EUR
-  CDF
-}
-
-enum TelcoServiceEnum {
-  AFRICELL
-  AIRTEL
-  ORANGE
-  VODACOM
-}
-
-enum AccountStatusEnum {
-  PENDING
-  APPROVED
-  MEMBER
-}
-
-enum UserTypeEnum {
-  MERCHANT
-  USER_SUPPORT
-}
-
-enum UserRoleEnum {
-  ROLE_ROOT
-  ROLE_ADMIN
-  ROLE_WRITER
-  ROLE_MANAGER
-  ROLE_FREE_USER
 }

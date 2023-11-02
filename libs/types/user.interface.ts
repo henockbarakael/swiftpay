@@ -1,3 +1,4 @@
+import { Merchant, UserSupport } from '@prisma/client';
 import { IUserRoleResponse } from './';
 
 export interface AuthResponse {
@@ -19,4 +20,6 @@ export interface IUserResponse {
   phone: string;
   isActive: boolean;
   userRoles: IUserRoleResponse[];
+  merchant: Merchant;
+  userSupport: UserSupport;
 }

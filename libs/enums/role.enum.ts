@@ -1,6 +1,7 @@
 export enum RoleEnum {
-  MERCHANT = 'merchant',
-  ADMIN = 'admin',
-  SUPER_ADMIN = 'super_admin',
-  USER_SUPPORT = 'user_support',
+  ROLE_ROOT = 'ROLE_ROOT',
+  ROLE_ADMIN = 'ROLE_ADMIN',
+  ROLE_WRITER = 'ROLE_WRITER',
+  ROLE_MANAGER = 'ROLE_MANAGER',
+  ROLE_FREE_USER = ' ROLE_FREE_USER',
 }

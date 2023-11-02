@@ -62,12 +62,12 @@ export class UserSupportService {
         where: {
           AND: [
             {
-              userId: id,
+              id: id,
             },
           ],
         },
         include: {
-          user: true,
+          users: true,
           accountStatus: true,
           MerchantWallet: true,
           MerchantAccountParameter: true,
