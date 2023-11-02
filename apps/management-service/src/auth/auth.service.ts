@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -32,38 +33,20 @@ export class AuthService {
   async signIn(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    try {
-      const userRepo = await this.prismaService.user.findUnique({
-        where: {
-          email,
-        },
-        include: {
-          userRoles: {
-            include: {
-              role: true,
-            },
-          },
-          merchant: true,
-          userSupport: true,
-        },
-      });
-      if (!userRepo) {
-        throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
-      } else {
-        const pwdMatches = await argon.verify(userRepo.password, password);
-        const userRO = userRepo as unknown as IUserResponse;
-        if (pwdMatches) {
-          return this.getUserAuth(userRO);
-        } else {
-          throw new NotFoundException(PASSWORD_FAIL_MESSAGE);
-        }
-      }
-    } catch (error) {
-      throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
-    }
+    const user = await this.validateUser({ email, password });
+    return this.getUserAuth(user);
   }
+
   async register(payload: CreateAuthDto) {
     try {
+      const existUser = await this.prismaService.user.findUnique({
+        where: {
+          email: payload.email,
+        },
+      });
+      if (existUser) {
+        throw new ConflictException('This user exist ');
+      }
       const hash = await this.hashPassword(payload.password);
       const data = { ...payload };
       const roleSlug = data.role;
@@ -175,6 +158,39 @@ export class AuthService {
       });
     } catch (error) {
       throw new Error('Method not implemented.');
+    }
+  }
+  private async validateUser(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    try {
+      const userRepo = await this.prismaService.user.findUnique({
+        where: {
+          email,
+        },
+        include: {
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+          merchant: true,
+          userSupport: true,
+        },
+      });
+      if (!userRepo) {
+        throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
+      } else {
+        const pwdMatches = await argon.verify(userRepo.password, password);
+        const userRO = userRepo as unknown as IUserResponse;
+        if (pwdMatches) {
+          return userRO;
+        } else {
+          throw new UnauthorizedException(PASSWORD_FAIL_MESSAGE);
+        }
+      }
+    } catch (error) {
+      throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
     }
   }
   generateJWT(user: Partial<IUserResponse>) {
