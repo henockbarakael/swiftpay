@@ -1,3 +1,4 @@
+import { NotAcceptableException } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 export const isObjectsEqual = (obj1: unknown, obj2: unknown): boolean => {
@@ -91,7 +92,7 @@ export const normalizePhoneNumber = (phoneNumber: string): string => {
 
   // Check if the number has more than 9 digits
   if (cleanedNumber.length > 9) {
-    return phoneNumber;
+    throw new NotAcceptableException();
   }
 
   // The number is in the expected format and has a maximum length of 9 digits
