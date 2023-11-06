@@ -10,7 +10,7 @@ export class CreateMerchantDto {
   @IsString()
   @ApiProperty()
   @IsNotEmpty()
-  institutionId: string;
+  organizationId: string;
 
   @IsNotEmpty()
   @ApiProperty()

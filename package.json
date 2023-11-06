@@ -131,7 +131,8 @@
       "^shared/dto(|/.*)$": "<rootDir>/libs/dto/src/$1",
       "^@shared/encryption(|/.*)$": "<rootDir>/libs/encryption/src/$1",
       "^shared/encryption(|/.*)$": "<rootDir>/libs/encryption/src/$1",
-      "^shared/wallet(|/.*)$": "<rootDir>/libs/wallet/src/$1"
+      "^shared/wallet(|/.*)$": "<rootDir>/libs/wallet/src/$1",
+      "^shared/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1"
     }
   }
 }

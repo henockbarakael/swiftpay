@@ -3,15 +3,16 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -37,8 +38,11 @@ export class AuthController {
     return this.authService.findOne(id);
   }
 
-  @Patch('refresh-token')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(id, updateAuthDto);
+  @UseGuards(RefreshJwtAuthGuard)
+  @Get('refresh-token')
+  refreshTokens(@Req() req: Request) {
+    const user = req.user;
+    const refreshToken = req.user['refreshToken'];
+    return this.authService.refreshToken(user, refreshToken);
   }
 }

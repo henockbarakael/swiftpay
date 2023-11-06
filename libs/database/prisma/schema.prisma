@@ -118,6 +118,7 @@ model User {
   state             String?
   country           String?
   imageUrl          String?
+  refreshToken      String?
   isActive          Boolean?     @default(false)
   isMerchant        Boolean?     @default(false)
   lastLogin         DateTime?
@@ -130,8 +131,10 @@ model User {
   userRoles         UserRole[]
   merchantId        String?
   userSupportId     String?
+  organizationId    String?
   merchant          Merchant?    @relation(fields: [merchantId], references: [id])
   userSupport       UserSupport? @relation(fields: [userSupportId], references: [id])
+  institution       Institution? @relation(fields: [organizationId], references: [id])
   AuditLog          AuditLog[]
 
   @@unique([userSupportId])
@@ -141,12 +144,12 @@ model User {
 model Merchant {
   id              String    @id @default(uuid())
   name            String
-  institutionId   String
+  organizationId  String?
   deletedAt       DateTime?
   accountStatusId String
 
   accountStatus            AccountStatus              @relation(fields: [accountStatusId], references: [id])
-  institution              Institution                @relation(fields: [institutionId], references: [id])
+  institution              Institution?               @relation(fields: [organizationId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter[]
   DailyOperation           DailyOperation[]
@@ -261,7 +264,8 @@ model Institution {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  Marchant Merchant[]
+  marchants Merchant[]
+  managers  User[]
 
   @@map("institution")
 }
