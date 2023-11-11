@@ -116,7 +116,7 @@ export class UserRegisterDto {
   @IsString()
   @ApiProperty()
   @IsNotEmpty()
-  institutionId: string;
+  organizationId: string;
 
   @IsString()
   @IsOptional()

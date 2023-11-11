@@ -18,7 +18,8 @@ export class InstitutionService {
     try {
       return await this.prismaService.institution.findMany({
         include: {
-          Marchant: true,
+          marchants: true,
+          managers: true,
         },
       });
     } catch (error) {
@@ -45,7 +46,8 @@ export class InstitutionService {
           id,
         },
         include: {
-          Marchant: true,
+          marchants: true,
+          managers: true,
         },
       });
     } catch (error) {

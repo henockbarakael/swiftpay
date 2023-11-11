@@ -7,14 +7,17 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MerchantService } from './merchant.service';
 import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
 import { PaginationDto } from 'shared/dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('merchant')
+@UseGuards(JwtAuthGuard)
 @ApiTags('merchant')
 export class MerchantController {
   constructor(private readonly merchantService: MerchantService) {}

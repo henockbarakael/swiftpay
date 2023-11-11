@@ -1,3 +1,4 @@
+import { NotAcceptableException } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 export const isObjectsEqual = (obj1: unknown, obj2: unknown): boolean => {
@@ -71,4 +72,29 @@ export const checkValidOperator = (
 
 export const generateUuid = () => {
   return v4();
+};
+
+export const normalizePhoneNumber = (phoneNumber: string): string => {
+  // Remove non-numeric characters
+  let cleanedNumber: string = phoneNumber.replace(/\D/g, '');
+
+  // Check if the number starts with "+243", "243", or "0"
+  if (cleanedNumber.startsWith('+243')) {
+    // Replace the "+243" prefix with "0"
+    cleanedNumber = '0' + cleanedNumber.slice(4);
+  } else if (cleanedNumber.startsWith('243')) {
+    // Replace the "243" prefix with "0"
+    cleanedNumber = '0' + cleanedNumber.slice(3);
+  } else if (!cleanedNumber.startsWith('0')) {
+    // The number doesn't match any of the expected prefixes
+    return phoneNumber;
+  }
+
+  // Check if the number has more than 9 digits
+  if (cleanedNumber.length > 9) {
+    throw new NotAcceptableException();
+  }
+
+  // The number is in the expected format and has a maximum length of 9 digits
+  return cleanedNumber;
 };

@@ -1,26 +1,22 @@
 import {
+  ConflictException,
+  ForbiddenException,
   Injectable,
   NotAcceptableException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import * as argon from 'argon2';
-import {
-  FORBIDDEN_TO_LOGIN_MESSAGE,
-  NOT_FOUND_USER_MESSAGE,
-  PASSWORD_FAIL_MESSAGE,
-} from 'libs/constants';
+import { FORBIDDEN_TO_LOGIN_MESSAGE } from 'libs/constants';
 import { IUserResponse } from 'shared/types';
-import { RoleEnum, UserTypeEnum } from 'libs/enums';
 import { DatabaseService } from 'shared/database';
 import { MerchantService } from '../merchant/merchant.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { Merchant, Role, User, UserRole } from '@prisma/client';
 import { CreateMerchantDto } from '../merchant/dto/create-merchant.dto';
+import { UserTypeEnum } from 'libs/enums';
 
 @Injectable()
 export class AuthService {
@@ -29,41 +25,23 @@ export class AuthService {
     private readonly merchantService: MerchantService,
     private jwtService: JwtService,
   ) {}
-  async signIn(loginDto: LoginDto) {
+  async signIn(loginDto: LoginDto): Promise<IUserResponse> {
     const { email, password } = loginDto;
 
-    try {
-      const userRepo = await this.prismaService.user.findUnique({
-        where: {
-          email,
-        },
-        include: {
-          userRoles: {
-            include: {
-              role: true,
-            },
-          },
-          merchant: true,
-          userSupport: true,
-        },
-      });
-      if (!userRepo) {
-        throw new NotFoundException(NOT_FOUND_USER_MESSAGE);
-      } else {
-        const pwdMatches = await argon.verify(userRepo.password, password);
-        const userRO = userRepo as unknown as IUserResponse;
-        if (pwdMatches) {
-          return this.getUserAuth(userRO);
-        } else {
-          throw new NotFoundException(PASSWORD_FAIL_MESSAGE);
-        }
-      }
-    } catch (error) {
-      throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
-    }
+    const user = await this.validateUser({ email, password });
+    return await this.getUserAuth(user);
   }
+
   async register(payload: CreateAuthDto) {
     try {
+      const existUser = await this.prismaService.user.findUnique({
+        where: {
+          email: payload.email,
+        },
+      });
+      if (existUser) {
+        throw new ConflictException('This user exist ');
+      }
       const hash = await this.hashPassword(payload.password);
       const data = { ...payload };
       const roleSlug = data.role;
@@ -100,7 +78,7 @@ export class AuthService {
       const merchant = await this.addNewMerchant({
         name: payload.merchantName,
         accountStatusId: payload.accountStatusId,
-        institutionId: payload.institutionId,
+        organizationId: payload.organizationId,
       });
       this.update(user.id, { merchantId: merchant.id });
     }
@@ -122,6 +100,155 @@ export class AuthService {
     });
   }
 
+  async getTokens(payload: IUserResponse) {
+    try {
+      const [accessToken, refreshToken, expiresIn] = await Promise.all([
+        this.jwtService.signAsync(payload, {
+          expiresIn: '60s',
+          secret: process.env.JWT_SECRET_KEY,
+        }),
+        this.jwtService.signAsync(payload, {
+          expiresIn: '7d',
+          secret: process.env.JWT_REFRESH_TOKEN_KEY,
+        }),
+        this.getTokenExpiresIn(),
+      ]);
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw new NotAcceptableException(error.message());
+    }
+  }
+  getTokenExpiresIn() {
+    const expireTime = 20 * 1000;
+    return new Date().setTime(new Date().getTime() + expireTime);
+  }
+  async getUserAuth(payload: IUserResponse): Promise<IUserResponse> {
+    try {
+      const response: IUserResponse = {
+        user: {
+          id: payload.id,
+          email: payload.email,
+          role: payload.userRoles,
+          isActive: payload.isActive,
+          ...payload,
+        },
+        ...(await this.getTokens(payload)),
+      } as unknown as IUserResponse;
+      await this.updateRefreshToken(
+        payload.email,
+        (
+          await this.getTokens(payload)
+        ).refreshToken,
+      );
+      return response;
+    } catch (error) {}
+  }
+
+  async findAll(): Promise<User[]> {
+    try {
+      return await this.prismaService.user.findMany({
+        where: { deletedAt: null },
+        include: {
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      });
+    } catch (e) {}
+  }
+  async findOne(id: string): Promise<User> {
+    try {
+      return await this.prismaService.user.findUnique({
+        where: { id },
+        include: {
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      });
+    } catch (e) {}
+  }
+  async remove(id: string): Promise<User> {
+    try {
+      return await this.prismaService.user.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+    } catch (e) {}
+  }
+  async existUser(loginDto: LoginDto): Promise<User> {
+    const { email } = loginDto;
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: {
+          email,
+        },
+        include: {
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+          merchant: true,
+          userSupport: true,
+        },
+      });
+      if (!user) {
+        throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
+      }
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
+    }
+  }
+  async update(id: string, updateAuthDto: UpdateAuthDto) {
+    try {
+      return await this.prismaService.user.update({
+        where: { id },
+        data: {
+          ...updateAuthDto,
+        },
+      });
+    } catch (e) {}
+  }
+  async refreshToken(payload: any, refreshToken: string) {
+    const { email } = payload;
+    const existUser = await this.existUser(payload as unknown as LoginDto);
+    const refreshTokenMatches = await argon.verify(
+      existUser.refreshToken,
+      refreshToken,
+    );
+    if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
+    const tokens = await this.getTokens(payload);
+    await this.updateRefreshToken(email, tokens.refreshToken);
+    return tokens;
+  }
+  async updateRefreshToken(email: string, refreshToken: string) {
+    const hashedRefreshToken = await this.hashPassword(refreshToken);
+    await this.prismaService.user.update({
+      where: {
+        email,
+      },
+      data: {
+        refreshToken: hashedRefreshToken,
+      },
+    });
+  }
+  private async addNewMerchant(payload: CreateMerchantDto) {
+    try {
+      return await this.merchantService.create(payload);
+    } catch (e) {}
+  }
   private async hashPassword(password: string): Promise<string> {
     return await argon.hash(password);
   }
@@ -177,87 +304,23 @@ export class AuthService {
       throw new Error('Method not implemented.');
     }
   }
-  generateJWT(user: Partial<IUserResponse>) {
-    const today = new Date();
-    const exp = new Date(today);
-    exp.setDate(today.getDate() + 60);
-    return this.jwtService.sign(
-      {
-        id: user.id,
-        exp: exp.getTime() / 1000,
-        email: user.email,
-      },
-      {
-        secret: jwtConstants.secret,
-      },
-    );
-  }
-  getUserAuth(payload: IUserResponse): IUserResponse {
+  private async validateUser(loginDto: LoginDto) {
+    const { password } = loginDto;
+
     try {
-      const response: IUserResponse = {
-        user: {
-          id: payload.id,
-          email: payload.email,
-          role: payload.userRoles,
-          isActive: payload.isActive,
-          ...payload,
-        },
-        access_token: this.generateJWT(payload),
-      } as unknown as IUserResponse;
-      return response;
-    } catch (error) {}
-  }
-  private async addNewMerchant(payload: CreateMerchantDto) {
-    try {
-      return await this.merchantService.create(payload);
-    } catch (e) {}
-  }
-  async findAll(): Promise<User[]> {
-    try {
-      return await this.prismaService.user.findMany({
-        where: { deletedAt: null },
-        include: {
-          userRoles: {
-            include: {
-              role: true,
-            },
-          },
-        },
-      });
-    } catch (e) {}
-  }
-  async findOne(id: string): Promise<User> {
-    try {
-      return await this.prismaService.user.findUnique({
-        where: { id },
-        include: {
-          userRoles: {
-            include: {
-              role: true,
-            },
-          },
-        },
-      });
-    } catch (e) {}
-  }
-  async remove(id: string): Promise<User> {
-    try {
-      return await this.prismaService.user.update({
-        where: { id },
-        data: {
-          deletedAt: new Date(),
-        },
-      });
-    } catch (e) {}
-  }
-  async update(id: string, updateAuthDto: UpdateAuthDto) {
-    try {
-      return await this.prismaService.user.update({
-        where: { id },
-        data: {
-          ...updateAuthDto,
-        },
-      });
-    } catch (e) {}
+      const userRepo = await this.existUser(loginDto);
+      const pwdMatches = await argon.verify(userRepo.password, password);
+
+      const userRO = userRepo as unknown as IUserResponse;
+      if (pwdMatches) {
+        return userRO;
+      } else {
+        throw new UnauthorizedException(
+          "Mot de passe incorrect. Vous n'êtes pas autorisé! ",
+        );
+      }
+    } catch (error) {
+      throw new UnauthorizedException(FORBIDDEN_TO_LOGIN_MESSAGE);
+    }
   }
 }

@@ -14,11 +14,11 @@
     "build-notification": "nest build notification-service",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
-    "start-telco": "nest start telco-service",
-    "start-mgm": "nest start management-service",
-    "start-callback": "nest start callback-service",
-    "start-gateway": "nest start gateway-service",
-    "start-notification": "nest start notification-service",
+    "start-telco": "nest start telco-service --watch",
+    "start-mgm": "nest start management-service --watch",
+    "start-callback": "nest start callback-service --watch",
+    "start-gateway": "nest start gateway-service --watch",
+    "start-notification": "nest start notification-service --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/agregator/main",
@@ -131,7 +131,8 @@
       "^shared/dto(|/.*)$": "<rootDir>/libs/dto/src/$1",
       "^@shared/encryption(|/.*)$": "<rootDir>/libs/encryption/src/$1",
       "^shared/encryption(|/.*)$": "<rootDir>/libs/encryption/src/$1",
-      "^shared/wallet(|/.*)$": "<rootDir>/libs/wallet/src/$1"
+      "^shared/wallet(|/.*)$": "<rootDir>/libs/wallet/src/$1",
+      "^shared/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1"
     }
   }
 }

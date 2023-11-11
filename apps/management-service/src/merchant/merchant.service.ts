@@ -26,7 +26,7 @@ export class MerchantService {
         }),
         await this.prismaService.institution.findUniqueOrThrow({
           where: {
-            id: createMerchantDto.institutionId,
+            id: createMerchantDto.organizationId,
           },
         }),
       ]);
@@ -36,7 +36,7 @@ export class MerchantService {
         data: {
           name: createMerchantDto.name,
           accountStatusId: accountStatus.id,
-          institutionId: institution.id,
+          organizationId: institution.id,
         },
         include: {
           users: true,

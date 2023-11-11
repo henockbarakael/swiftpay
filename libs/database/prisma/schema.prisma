@@ -10,6 +10,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//Enums
+enum ActionOperationEnum {
+  DEBIT
+  CREDIT
+}
+
+enum CurrencyEnum {
+  USD
+  EUR
+  CDF
+}
+
+enum TelcoServiceEnum {
+  AFRICELL
+  AIRTEL
+  ORANGE
+  VODACOM
+}
+
+enum AccountStatusEnum {
+  PENDING
+  APPROVED
+  MEMBER
+}
+
+enum UserTypeEnum {
+  MERCHANT
+  USER_SUPPORT
+}
+
+enum RoleEnum {
+  ROLE_ROOT
+  ROLE_ADMIN
+  ROLE_WRITER
+  ROLE_MANAGER
+  ROLE_FREE_USER
+}
+
 // Models
 model Permission {
   id             String           @id @default(uuid())
@@ -80,6 +118,7 @@ model User {
   state             String?
   country           String?
   imageUrl          String?
+  refreshToken      String?
   isActive          Boolean?     @default(false)
   isMerchant        Boolean?     @default(false)
   lastLogin         DateTime?
@@ -92,8 +131,10 @@ model User {
   userRoles         UserRole[]
   merchantId        String?
   userSupportId     String?
+  organizationId    String?
   merchant          Merchant?    @relation(fields: [merchantId], references: [id])
   userSupport       UserSupport? @relation(fields: [userSupportId], references: [id])
+  institution       Institution? @relation(fields: [organizationId], references: [id])
   AuditLog          AuditLog[]
 
   @@unique([userSupportId])
@@ -103,12 +144,12 @@ model User {
 model Merchant {
   id              String    @id @default(uuid())
   name            String
-  institutionId   String
+  organizationId  String?
   deletedAt       DateTime?
   accountStatusId String
 
   accountStatus            AccountStatus              @relation(fields: [accountStatusId], references: [id])
-  institution              Institution                @relation(fields: [institutionId], references: [id])
+  institution              Institution?               @relation(fields: [organizationId], references: [id])
   MerchantWallet           MerchantWallet[]
   MerchantAccountParameter MerchantAccountParameter[]
   DailyOperation           DailyOperation[]
@@ -223,7 +264,8 @@ model Institution {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  Marchant Merchant[]
+  marchants Merchant[]
+  managers  User[]
 
   @@map("institution")
 }
@@ -360,42 +402,4 @@ model Notification {
   type NotificationType @relation(fields: [typeId], references: [id])
 
   @@map("notifications")
-}
-
-//Enums
-enum ActionOperationEnum {
-  DEBIT
-  CREDIT
-}
-
-enum CurrencyEnum {
-  USD
-  EUR
-  CDF
-}
-
-enum TelcoServiceEnum {
-  AFRICELL
-  AIRTEL
-  ORANGE
-  VODACOM
-}
-
-enum AccountStatusEnum {
-  PENDING
-  APPROVED
-  MEMBER
-}
-
-enum UserTypeEnum {
-  MERCHANT
-  USER_SUPPORT
-}
-
-enum UserRoleEnum {
-  ROLE_ROOT
-  ROLE_ADMIN
-  ROLE_WRITER
-  ROLE_MANAGER
-  ROLE_FREE_USER
 }
