@@ -19,6 +19,10 @@ export class CallbackServiceService {
       },
     });
 
+    if (transaction === undefined || transaction === null) {
+      return;
+    }
+
     console.log('transaction', transaction);
 
     if (data.Trans_Status === 'Failed') {
