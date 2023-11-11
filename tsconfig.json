@@ -43,10 +43,10 @@
         "libs/constants/src/*"
       ],
       "shared/dto": [
-        "libs/dto/src",
+        "libs/dto/src"
       ],
       "shared/dto/*": [
-        "libs/dto/src/*",
+        "libs/dto/src/*"
       ],
       "shared/encryption": [
         "libs/encryption/src"
@@ -63,6 +63,12 @@
       "shared/merchant-commission": [
         "libs/merchant-commission/src"
       ],
+      "shared/decorators": [
+        "libs/decorators/src"
+      ],
+      "shared/decorators/*": [
+        "libs/decorators/src/*"
+      ]
     }
   }
 }
