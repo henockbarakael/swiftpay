@@ -230,23 +230,21 @@ async function main() {
     });
   }
 
-  await prisma.currency.deleteMany();
+  // await prisma.currency.createMany({
+  //   data: [{ currency: 'CDF' }, { currency: 'USD' }],
+  // });
 
-  await prisma.currency.createMany({
-    data: [{ currency: 'CDF' }, { currency: 'USD' }],
-  });
+  // await prisma.transactionStatus.createMany({
+  //   data: [{ status: 'PENDING' }, { status: 'FAILED' }, { status: 'SUCCESS' }],
+  // });
 
-  await prisma.transactionStatus.createMany({
-    data: [{ status: 'PENDING' }, { status: 'FAILED' }, { status: 'SUCCESS' }],
-  });
-
-  await prisma.service.createMany({
-    data: [
-      { name: 'vodacom', serviceTopic: 'vodacom' },
-      { name: 'orange', serviceTopic: 'orange' },
-      { name: 'airtel', serviceTopic: 'airtel' },
-    ],
-  });
+  // await prisma.service.createMany({
+  //   data: [
+  //     { name: 'vodacom', serviceTopic: 'vodacom' },
+  //     { name: 'orange', serviceTopic: 'orange' },
+  //     { name: 'airtel', serviceTopic: 'airtel' },
+  //   ],
+  // });
 }
 main()
   .then(async () => {

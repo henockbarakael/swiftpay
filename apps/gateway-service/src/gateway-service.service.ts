@@ -27,7 +27,7 @@ export class GatewayService {
         id: checkMarchantVerificationDto.merchantID,
       },
       include: {
-        user: true,
+        users: true,
       },
     });
 
