@@ -4,7 +4,6 @@ import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';
 import { referenceGenerator, checkValidOperator } from 'libs/utils';
 import { ClientKafka } from '@nestjs/microservices';
-import { EncryptionService } from 'shared/encryption';
 import { v4 } from 'uuid';
 import { WalletService } from 'shared/wallet';
 @Injectable()
@@ -13,7 +12,6 @@ export class GatewayService {
     private dbService: DatabaseService,
     @Inject('gateway') private gatewayClient: ClientKafka,
     private readonly walletService: WalletService,
-    private encryptionService: EncryptionService,
   ) {}
 
   private readonly logger = new Logger(GatewayService.name);

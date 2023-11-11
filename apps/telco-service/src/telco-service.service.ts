@@ -1,15 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
 import { Request } from 'shared/types/request.event';
 import axios from 'axios';
 
 @Injectable()
 export class TelcoServiceService {
-  constructor(
-    @Inject('telco')
-    private readonly telcoClient: ClientKafka,
-  ) {}
-
   async handleTelcoRequest(data: Request) {
     console.log(data);
     // request body
