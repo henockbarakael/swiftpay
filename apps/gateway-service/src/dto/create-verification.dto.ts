@@ -1,12 +1,13 @@
 import { ActionOperationEnum } from '@prisma/client';
+import { Transform } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
-import { NormalizePhoneNumber } from 'shared/decorators';
+import { normalizePhoneNumber } from 'libs/utils';
 export class CreateVerificationDto {
   @IsNotEmpty()
   merchantID: number;
 
   @IsNotEmpty()
-  @NormalizePhoneNumber()
+  @Transform(({ value }) => normalizePhoneNumber(value))
   phoneNumber: number;
 
   @IsNotEmpty()
@@ -36,7 +37,7 @@ export class CheckMarchantVerificationDto {
   merchantID: string;
 
   @IsNotEmpty()
-  @NormalizePhoneNumber()
+  @Transform(({ value }) => normalizePhoneNumber(value))
   phoneNumber: string;
 
   @IsNotEmpty()

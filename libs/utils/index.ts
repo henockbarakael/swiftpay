@@ -75,15 +75,16 @@ export const generateUuid = () => {
 };
 
 export const normalizePhoneNumber = (phoneNumber: string): string => {
-  // Remove non-numeric characters
-  const cleanedNumber: string = phoneNumber.replace(/\D/g, '');
+  const validPrefixes =
+    /^(?:\+?0?243|00243|0243)?(81|82|83|99|98|97|84|85|86|90)(\d{7})$/;
 
-  cleanedNumber.replace(/^(+|)243/, '0');
-  // Check if the number has more than 9 digits
-  if (cleanedNumber.length > 9) {
-    throw new NotAcceptableException();
+  const cleanedNumber = phoneNumber.replace(/\D/g, '');
+
+  const match = cleanedNumber.match(validPrefixes);
+
+  if (match) {
+    return '0' + match[1] + match[2];
   }
 
-  // The number is in the expected format and has a maximum length of 9 digits
-  return cleanedNumber;
+  throw new NotAcceptableException();
 };
