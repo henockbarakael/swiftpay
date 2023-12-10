@@ -14,7 +14,7 @@ export class TelcoServiceService {
         amount: data.amount,
         currency: `${data.currency.toUpperCase()}`,
         action: `${data.action.toLowerCase()}`,
-        customer_number: `${data.phoneNumber.slice(4)}`,
+        customer_number: `${data.phoneNumber}`,
         firstname: `${process.env.firstname}`,
         lastname: `${process.env.lastname}`,
         email: `${process.env.email}`,
