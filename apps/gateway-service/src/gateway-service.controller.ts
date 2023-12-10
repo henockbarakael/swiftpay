@@ -17,7 +17,8 @@ export class GatewayController {
         message:
           "your requested has been received successfuly and it's under processing",
       };
-    } else {
+    }else if()
+     else {
       throw new BadRequestException('Invalid request');
     }
   }

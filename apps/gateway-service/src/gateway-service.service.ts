@@ -2,11 +2,18 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CheckMarchantVerificationDto } from './dto/create-verification.dto';
 import { DatabaseService } from 'shared/database';
 import { ActionOperationEnum } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { referenceGenerator, checkValidOperator } from 'libs/utils';
 import { ClientKafka } from '@nestjs/microservices';
 import { v4 } from 'uuid';
 import { WalletService } from 'shared/wallet';
 @Injectable()
+
+interface CheckMarchantResponse {
+  success: boolean;
+  ack: any;
+}
+const prisma = new PrismaClient();
 export class GatewayService {
   constructor(
     private dbService: DatabaseService,
@@ -16,12 +23,13 @@ export class GatewayService {
 
   private readonly logger = new Logger(GatewayService.name);
 
+
   async checkMarchant(
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
-  ) {
+  ): Promise<{ success: boolean; ack: any; message: string }> {
     const key = checkMarchantVerificationDto.key;
 
-    // try {
+
     const existMarchant = await this.dbService.merchant.findUniqueOrThrow({
       where: {
         id: checkMarchantVerificationDto.merchantID,
@@ -54,13 +62,20 @@ export class GatewayService {
 
           console.log(isIntegrity);
           // check if the customer number match operator schemas
+          console.log(checkValidOperator(
+            checkMarchantVerificationDto.phoneNumber,
+            existService[0].name,
+          ))
           if (
             !checkValidOperator(
               checkMarchantVerificationDto.phoneNumber,
               existService[0].name,
             )
+            
           ) {
+            
             return false;
+            
           }
 
           console.log('before db write');
@@ -74,7 +89,7 @@ export class GatewayService {
 
           // swyft reference
           const SwyftReference = referenceGenerator();
-
+          const phoneNumberWithZero = checkMarchantVerificationDto.phoneNumber.padStart(10, '0');
           // store transaction in the database
           const ack = await this.dbService.dailyOperation.create({
             data: {
@@ -87,12 +102,71 @@ export class GatewayService {
               serviceId: existService[0].id,
               transactionStatusId: transactionStatus.id,
               reference: `${SwyftReference}`,
-              customerNumber: checkMarchantVerificationDto.phoneNumber,
+              customerNumber: phoneNumberWithZero,
               callbackUrl: checkMarchantVerificationDto.callback_url,
               action: checkMarchantVerificationDto.action,
               merchantId: checkMarchantVerificationDto.merchantID,
             },
           });
+
+          try {
+            // store transaction in the database
+            
+            const ack = await this.dbService.dailyOperation.create({
+              data: {
+                amount: checkMarchantVerificationDto.amount,
+                merchantReference: checkMarchantVerificationDto.reference,
+                telcoReference: `${v4()}`,
+                telcoStatus: '',
+                telcoStatusDescription: '',
+                currencyId: existCurrency[0].id,
+                serviceId: existService[0].id,
+                transactionStatusId: transactionStatus.id,
+                reference: `${SwyftReference}`,
+                customerNumber: phoneNumberWithZero,
+                callbackUrl: checkMarchantVerificationDto.callback_url,
+                action: checkMarchantVerificationDto.action,
+                merchantId: checkMarchantVerificationDto.merchantID,
+              },
+            });
+        
+          } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+              if (error.code === 'P2002') {
+                if (error.meta?.target === 'daily_operation_merchantReference_key') {
+                  console.log("Erreur : une opération quotidienne avec cette référence de marchand existe déjà.");
+                  return {
+                    success: false,
+                    ack: null,
+                    message: "La référence marchande existe déjà.",
+                  };
+                
+                } else {
+                  console.log("Erreur de contrainte unique :", error.meta?.target);
+                  return {
+                    success: false,
+                    ack: null,
+                    message: "Erreur de contrainte unique :"+ error.meta?.target,
+                  };
+                }
+              } else {
+                console.log("Erreur Prisma connue :", error.code);
+                return {
+                  success: false,
+                  ack: null,
+                  message: "Erreur Prisma connue :"+ error.code,
+                };
+              }
+            } else {
+              // Gestion des autres erreurs non Prisma
+              console.log("Erreur inconnue :", error);
+              return {
+                success: false,
+                ack: null,
+                message: "Erreur Prisma connue :"+ error,
+              };
+            }
+          }
 
           // wallet check and failed in case
 
@@ -207,11 +281,10 @@ export class GatewayService {
         return false;
       }
     } else {
+      console.log("Merchant Not Found");
       return false;
     }
-    // } catch (error) {
-    //   throw new NotAcceptableException(error);
-    // }
+
   }
 
   async checkServiceAndCurrency(
@@ -248,6 +321,8 @@ export class GatewayService {
     checkMarchantVerificationDto: CheckMarchantVerificationDto,
     key: string,
   ) {
+    this.logger.log(checkMarchantVerificationDto);
+    this.logger.log(key);
     this.logger.log('Check Integrity', checkMarchantVerificationDto, key);
 
     // const decrypted = decodeURIComponent(

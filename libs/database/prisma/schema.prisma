@@ -216,6 +216,7 @@ model DailyOperation {
   reference              String
   action                 String?
   telcoReference         String
+  aggregatorReference    String
   customerNumber         String
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt

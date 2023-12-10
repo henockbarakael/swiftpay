@@ -48,7 +48,11 @@ export const checkValidOperator = (
   const airtel = ['99', '98', '97'];
   const orange = ['84', '85', '86'];
   const africell = ['90'];
-  const operatorId = phoneNumber.slice(4, 6);
+  const operatorId = phoneNumber.substr(0,2);
+
+  // Supprimer les caractères non numériques du numéro de téléphone
+
+  const cleanedNumber = phoneNumber.replace(/\D/g, '');
 
   if (service.toLowerCase() === 'airtel') {
     if (airtel.indexOf(operatorId) != -1) {
@@ -76,14 +80,11 @@ export const generateUuid = () => {
 
 export const normalizePhoneNumber = (phoneNumber: string): string => {
   const validPrefixes =
-    /^(?:\+?0?243|00243|0243)?(81|82|83|99|98|97|84|85|86|90)(\d{7})$/;
-
+    /^(?:\+?0?243|00243|0243)?(81|82|83|99|98|97|84|85|86|90|081|082|083|099|098|097|084|085|086|090)(\d{7})$/;
   const cleanedNumber = phoneNumber.replace(/\D/g, '');
-
   const match = cleanedNumber.match(validPrefixes);
-
   if (match) {
-    return '0' + match[1] + match[2];
+     return match[1].replace(/^0/, '') + match[2];
   }
 
   throw new NotAcceptableException();
