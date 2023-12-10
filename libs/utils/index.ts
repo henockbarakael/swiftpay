@@ -1,4 +1,4 @@
-import { NotAcceptableException } from '@nestjs/common';
+import { NotAcceptableException, HttpException, HttpStatus, HttpCode } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 export const isObjectsEqual = (obj1: unknown, obj2: unknown): boolean => {
@@ -43,35 +43,35 @@ export const referenceGenerator = (): string => {
 export const checkValidOperator = (
   phoneNumber: string,
   service: string,
-): boolean => {
+): { success: boolean; message: string } => {
   const vodacom = ['81', '82', '83'];
   const airtel = ['99', '98', '97'];
-  const orange = ['84', '85', '86'];
-  const africell = ['90'];
-  const operatorId = phoneNumber.substr(0,2);
+  const orange = ['84', '85', '89', '80'];
+  const africell = ['90', '91'];
+  const operatorId = phoneNumber.substring(0, 2);
 
   // Supprimer les caractères non numériques du numéro de téléphone
-
   const cleanedNumber = phoneNumber.replace(/\D/g, '');
 
   if (service.toLowerCase() === 'airtel') {
-    if (airtel.indexOf(operatorId) != -1) {
-      return true;
+    if (airtel.indexOf(operatorId) !== -1) {
+      return { success: true, message: "Numéro de téléphone valide pour le service Airtel." };
     }
   } else if (service.toLowerCase() === 'orange') {
-    if (orange.indexOf(operatorId) != -1) {
-      return true;
+    if (orange.indexOf(operatorId) !== -1) {
+      return { success: true, message: "Numéro de téléphone valide pour le service Orange." };
     }
   } else if (service.toLowerCase() === 'vodacom') {
-    if (vodacom.indexOf(operatorId) != -1) {
-      return true;
+    if (vodacom.indexOf(operatorId) !== -1) {
+      return { success: true, message: "Numéro de téléphone valide pour le service Vodacom." };
     }
   } else if (service.toLowerCase() === 'africell') {
-    if (africell.indexOf(operatorId) != -1) {
-      return true;
+    if (africell.indexOf(operatorId) !== -1) {
+      return { success: true, message: "Numéro de téléphone valide pour le service Africell." };
     }
   }
-  return false;
+
+  return { success: false, message: "Numéro de téléphone invalide pour l'opérateur spécifié." };
 };
 
 export const generateUuid = () => {
@@ -80,12 +80,16 @@ export const generateUuid = () => {
 
 export const normalizePhoneNumber = (phoneNumber: string): string => {
   const validPrefixes =
-    /^(?:\+?0?243|00243|0243)?(81|82|83|99|98|97|84|85|86|90|081|082|083|099|098|097|084|085|086|090)(\d{7})$/;
+    /^(?:\+?0?243|00243|0243)?(81|82|83|99|98|97|80|84|85|89|90|91|081|082|083|099|098|097|080|084|085|089|090|091)(\d{7})$/;
   const cleanedNumber = phoneNumber.replace(/\D/g, '');
   const match = cleanedNumber.match(validPrefixes);
   if (match) {
      return match[1].replace(/^0/, '') + match[2];
   }
 
-  throw new NotAcceptableException();
+  const errorMessage = "Le numéro de téléphone fourni n'est pas valide.";
+  throw new HttpException({
+    success: false,
+    message: errorMessage,
+  }, HttpStatus.NOT_ACCEPTABLE);
 };
