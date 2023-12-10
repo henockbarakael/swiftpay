@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { GatewayService } from './gateway-service.service';
-import { TelcoServiceModule } from '../../telco-service/src/telco-service.module'; // Ajout de l'importation du module TelcoServiceModul
 import { GatewayController } from './gateway-service.controller';
 import { DatabaseModule } from 'shared/database';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -26,7 +25,6 @@ import { WalletService } from 'shared/wallet';
       },
     ]),
     DatabaseModule,
-    TelcoServiceModule, // Ajout du module TelcoServiceModule ici
   ],
   controllers: [GatewayController],
   providers: [GatewayService, EncryptionService, ConfigService, WalletService],
